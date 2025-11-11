@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Maven POM 模型版本，固定为 4.0.0 -->
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.11</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <!-- 项目坐标信息 -->
+    <!-- 组织或公司的唯一标识符，通常使用反向域名 -->
+    <groupId>com.hjy</groupId>
+    <!-- 项目的唯一标识符 -->
+    <artifactId>hjy</artifactId>
+    <!-- 项目的版本号 -->
+    <version>1.0.0</version>
+
+    <!-- 项目的显示名称 -->
+    <name>hjy-project</name>
+    <!-- 项目描述 -->
+    <description>暂定-个人-系统</description>
+    <!--    -->
+    <modules>
+        <module>app-framework</module>
+        <module>app-admin</module>
+        <module>app-test</module>
+    </modules>
+
+    <!-- 自定义属性配置 -->
+    <properties>
+        <!-- 项目版本号，可在其他地方通过 ${hjy.version} 引用 -->
+        <hjy.version>1.0.0</hjy.version>
+<!--        <spring-boot.version>3.4.11</spring-boot.version>-->
+    </properties>
+
+    <!-- 依赖管理：用于统一管理子模块的依赖版本，不会实际引入依赖 -->
+    <!-- 子模块可以继承这里声明的依赖版本，无需重复指定版本号 -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- 在此处添加需要统一管理版本的依赖 -->
+
+            <!-- 自定义的内容-->
+            <dependency>
+                <groupId>com.hjy</groupId>
+                <artifactId>app-admin</artifactId>
+                <version>${hjy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hjy</groupId>
+                <artifactId>app-framework</artifactId>
+                <version>${hjy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hjy</groupId>
+                <artifactId>app-test</artifactId>
+                <version>${hjy.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- 打包类型：pom 表示这是一个父项目，用于聚合多个子模块 -->
+    <packaging>pom</packaging>
+
+    <!-- Maven 仓库配置：用于下载项目依赖 -->
+    <repositories>
+        <repository>
+            <!-- 仓库唯一标识 -->
+            <id>public</id>
+            <!-- 仓库名称 -->
+            <name>aliyun nexus</name>
+            <!-- 阿里云 Maven 镜像地址，国内访问速度快 -->
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <!-- 启用发布版本的依赖下载 -->
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <!-- Maven 插件仓库配置：用于下载 Maven 插件 -->
+    <pluginRepositories>
+        <pluginRepository>
+            <!-- 插件仓库唯一标识 -->
+            <id>public</id>
+            <!-- 插件仓库名称 -->
+            <name>aliyun nexus</name>
+            <!-- 阿里云 Maven 镜像地址 -->
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <!-- 启用发布版本的插件下载 -->
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <!-- 禁用快照版本的插件下载 -->
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
