@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tool/gen")
@@ -23,6 +24,11 @@ public class GenController extends BaseController {
 //        List<GenTable> gts = new ArrayList<GenTable>();
 //        gts.add(new GenTable());
         return genTableService.selectGenTableAll();
+    }
+
+    @GetMapping("/test_mapper")
+    public List<Map<String, Object>> getTestMapper(){
+        return genTableService.testMap();
     }
 
     @GetMapping("/")
