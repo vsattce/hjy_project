@@ -9,7 +9,7 @@ spring:
     password: 123456Asd
 
 mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*.xml
+  mapper-locations: classpath*:/mapper/**/*.xml
 #  mapper-locations: classpath:mybatis/**/*Mapper.xml
   type-aliases-package: com.hjy.**.domain
   configuration:
