@@ -17,6 +17,8 @@
     </description>
 
     <dependencies>
+
+
         <dependency>
             <groupId>com.hjy</groupId>
             <artifactId>app-framework</artifactId>
@@ -31,7 +33,17 @@
         </dependency>
         <dependency>
             <groupId>com.hjy</groupId>
-            <artifactId>app-generator</artifactId>
+            <artifactId>app-system</artifactId>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.hjy</groupId>-->
+<!--            <artifactId>app-generator</artifactId>-->
+<!--        </dependency>-->
+<!--        -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>
