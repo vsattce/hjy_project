@@ -9,29 +9,22 @@
         <version>1.0.0</version>
     </parent>
 
-    <packaging>jar</packaging>
-    <artifactId>app-admin</artifactId>
+    <artifactId>app-generator</artifactId>
 
     <description>
-        web服务入口
+        generator代码生成
     </description>
 
     <dependencies>
         <dependency>
-            <groupId>com.hjy</groupId>
-            <artifactId>app-framework</artifactId>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.hjy</groupId>
-            <artifactId>app-test</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>com.hjy</groupId>
             <artifactId>app-common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.hjy</groupId>
-            <artifactId>app-generator</artifactId>
-        </dependency>
     </dependencies>
+
 </project>

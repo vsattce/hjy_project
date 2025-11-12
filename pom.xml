@@ -27,13 +27,20 @@
         <module>app-framework</module>
         <module>app-admin</module>
         <module>app-test</module>
+        <module>app-common</module>
+        <module>app-generator</module>
     </modules>
 
     <!-- 自定义属性配置 -->
     <properties>
         <!-- 项目版本号，可在其他地方通过 ${hjy.version} 引用 -->
         <hjy.version>1.0.0</hjy.version>
-<!--        <spring-boot.version>3.4.11</spring-boot.version>-->
+        <java.version>17</java.version>
+<!--        -->
+        <velocity.version>2.3</velocity.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <!-- 依赖管理：用于统一管理子模块的依赖版本，不会实际引入依赖 -->
@@ -41,7 +48,12 @@
     <dependencyManagement>
         <dependencies>
             <!-- 在此处添加需要统一管理版本的依赖 -->
-
+            <!-- velocity代码生成使用模板 -->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
             <!-- 自定义的内容-->
             <dependency>
                 <groupId>com.hjy</groupId>
@@ -55,9 +67,21 @@
             </dependency>
             <dependency>
                 <groupId>com.hjy</groupId>
+                <artifactId>app-common</artifactId>
+                <version>${hjy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hjy</groupId>
                 <artifactId>app-test</artifactId>
                 <version>${hjy.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.hjy</groupId>
+                <artifactId>app-generator</artifactId>
+                <version>${hjy.version}</version>
+            </dependency>
+
+
 
         </dependencies>
     </dependencyManagement>
@@ -100,5 +124,21 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
+    <!-- 构建配置 -->
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>3.1</version>-->
+<!--                <configuration>-->
+<!--                    <source>${java.version}</source>-->
+<!--                    <target>${java.version}</target>-->
+<!--                    <encoding>${project.build.sourceEncoding}</encoding>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
 
 </project>
