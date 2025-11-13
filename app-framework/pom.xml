@@ -29,10 +29,11 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-bom</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>cn.hutool</groupId>-->
+<!--            <artifactId>hutool-bom</artifactId>-->
+<!--&lt;!&ndash;            <version>5.8.38</version>&ndash;&gt;-->
+<!--        </dependency>-->
 
 
         <dependency>
