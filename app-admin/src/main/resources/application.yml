@@ -10,12 +10,6 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
-#  mapper-locations: classpath:mybatis/**/*Mapper.xml
   type-aliases-package: com.hjy.**.domain
   configuration:
     map-underscore-to-camel-case: true
-  # 搜索指定包别名
-#mybatis-plus:
-#  configuration:
-#    map-underscore-to-camel-case: true
-#  type-aliases-super-type: '[com.**.**.domain]'
