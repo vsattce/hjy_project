@@ -70,8 +70,12 @@
                 <artifactId>hutool-bom</artifactId>
                 <version>5.8.38</version>
                 <type>pom</type>
-<!--                &lt;!&ndash; 注意这里是import &ndash;&gt;-->
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.18.0</version>
             </dependency>
 
             <!-- 自定义的内容-->

@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class BaseController<S extends IBaseService<T>,T> {
 
-    @Autowired
+    @Autowired(required = false)
     private  S baseService;
 
     public S getBaseService() {
@@ -25,7 +25,7 @@ public class BaseController<S extends IBaseService<T>,T> {
 
     @RequestMapping(value = "/page", method = {RequestMethod.POST, RequestMethod.GET})
     public AjaxResult page(Page<T> page, T entity, @RequestParam Map<String,Object> parameters) {
-        IPage<T> entityIPage = baseService.page(page, entity,parameters);
+        IPage<T> entityIPage = baseService.page(page, entity, parameters);
         return success(entityIPage);
     }
 

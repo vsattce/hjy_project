@@ -38,8 +38,15 @@
             <groupId>com.hjy</groupId>
             <artifactId>app-framework</artifactId>
         </dependency>
-
-
+        <!-- 使用 Hutool 模块时，不用写版本号 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
