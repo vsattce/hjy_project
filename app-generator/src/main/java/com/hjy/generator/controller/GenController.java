@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tool/gen")
-public class GenController extends BaseController {
+public class GenController{
 
     @Autowired
     private IGenTableService genTableService;

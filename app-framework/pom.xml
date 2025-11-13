@@ -29,6 +29,11 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-bom</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>com.baomidou</groupId>

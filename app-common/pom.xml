@@ -39,6 +39,7 @@
             <artifactId>app-framework</artifactId>
         </dependency>
 
+
     </dependencies>
 
 </project>
