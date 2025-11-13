@@ -16,9 +16,9 @@ import lombok.Data;
  * @author ruoyi
  */
 @Data
-public class SysConfig// extends BaseEntity
+public class SysConfig extends BaseEntity
 {
-    private static final long serialVersionUID = 1L;
+//    private static final long serialVersionUID = 1L;
 
     /** 参数主键 */
 //    @Excel(name = "参数主键", cellType = ColumnType.NUMERIC)
