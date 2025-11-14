@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import com.hjy.common.constant.HttpStatus;
+import com.hjy.common.utils.StringUtils;
 //import com.hjy.common.utils.StringUtils;
 
 /**
@@ -56,10 +57,9 @@ public class AjaxResult extends HashMap<String, Object> {
     public AjaxResult(int code, String msg, Object data) {
         super.put(CODE_TAG, code);
         super.put(MSG_TAG, msg);
-//        if (StringUtils.isNotNull(data))
-//        {
-        super.put(DATA_TAG, data);
-//        }
+        if (StringUtils.isNotNull(data)) {
+            super.put(DATA_TAG, data);
+        }
     }
 
     /**

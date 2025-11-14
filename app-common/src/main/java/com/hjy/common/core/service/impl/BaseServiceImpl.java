@@ -35,7 +35,6 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, 
     }
     @Override
     public IPage<T> page(IPage<T> iPage, T entity, Map<String,Object> parameters) {
-//        System.out.println("iPage = " + iPage + ", entity = " + entity + ", parameters = " + parameters);
         QueryWrapper<T> queryWrapper =QueryWrapperUtils.entity2Wrapper(entity,parameters);
         return super.page(iPage, queryWrapper);
     }

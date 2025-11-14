@@ -7,10 +7,9 @@ import com.hjy.common.core.domain.AjaxResult;
 import com.hjy.common.core.page.TableDataInfo;
 import com.hjy.common.core.service.IBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -22,11 +21,62 @@ public class BaseController<S extends IBaseService<T>,T> {
     public S getBaseService() {
         return baseService;
     }
+    /**
+     * 查询通用对象不分页
+     */
+    @RequestMapping(value = "/list", method = {RequestMethod.POST, RequestMethod.GET})
+    public AjaxResult list(T entity , @RequestParam Map<String,Object> parameters) {
+        List<T> list = baseService.list(entity,parameters);
+        return success(list);
+    }
 
+    /**
+     * 查询通用对象
+     */
     @RequestMapping(value = "/page", method = {RequestMethod.POST, RequestMethod.GET})
     public AjaxResult page(Page<T> page, T entity, @RequestParam Map<String,Object> parameters) {
-        IPage<T> entityIPage = baseService.page(page, entity, parameters);
+        IPage<T> entityIPage = baseService.page(page, entity,parameters);
         return success(entityIPage);
+    }
+
+    /**
+     * 获取通用对象详细信息
+     */
+    @RequestMapping(value = "/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    public AjaxResult getById(@PathVariable Long id){
+        return success( baseService.getById(id));
+    }
+
+    /**
+     * 新增通用对象
+     */
+    @PostMapping
+    public AjaxResult save(@RequestBody T entity){
+        return success(baseService.save(entity));
+    }
+
+    /**
+     * 修改通用对象
+     */
+    @PutMapping
+    public AjaxResult updateById(@RequestBody T entity){
+        return success(baseService.updateById(entity));
+    }
+
+    /**
+     * 批量通用对象
+     */
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids){
+        return success(baseService.removeByIds(Arrays.asList(ids)));
+    }
+
+    /**
+     * 新增或修改通用对象
+     */
+    @PostMapping("/saveOrUpdate")
+    public AjaxResult saveOrUpdate(@RequestBody T entity){
+        return success(baseService.saveOrUpdate(entity));
     }
 
     /**

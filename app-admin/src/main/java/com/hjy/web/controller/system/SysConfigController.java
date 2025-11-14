@@ -18,19 +18,4 @@ import java.util.List;
 public class SysConfigController extends BaseController<SysConfigServiceImpl, SysConfig>
 {
 
-    @Autowired
-    private ISysConfigService sysConfigService;
-
-    @GetMapping("/list")
-    public List<SysConfig> getSysConfigList(){
-//        sysConfigService.list();
-        return sysConfigService.list();
-    }
-
-    @GetMapping( "/listPage")
-    public Page<SysConfig> listPage(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
-        return sysConfigService.page(new Page<>(page,size));
-    }
-
-
 }
