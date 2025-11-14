@@ -13,3 +13,8 @@ mybatis-plus:
   type-aliases-package: com.hjy.**.domain
   configuration:
     map-underscore-to-camel-case: true
+
+# 日志配置
+logging:
+  level:
+    com.hjy: debug
