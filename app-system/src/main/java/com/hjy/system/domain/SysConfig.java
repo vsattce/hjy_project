@@ -3,8 +3,10 @@ package com.hjy.system.domain;
 //import com.ruoyi.common.annotation.Excel;
 //import com.ruoyi.common.annotation.Excel.ColumnType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 //import org.apache.commons.lang3.builder.ToStringBuilder;
 //import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -17,12 +19,10 @@ import lombok.Data;
  * @author ruoyi
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SysConfig extends BaseEntity
 {
-//    private static final long serialVersionUID = 1L;
-
     /** 参数主键 */
-//    @Excel(name = "参数主键", cellType = ColumnType.NUMERIC)
     private Long configId;
 
     /** 参数名称 */

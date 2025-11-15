@@ -13,5 +13,5 @@ import java.util.Map;
 
 @Service
 public class SysConfigServiceImpl extends BaseServiceImpl<SysConfigMapper, SysConfig> implements ISysConfigService {
-
+    
 }
