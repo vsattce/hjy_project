@@ -9,6 +9,10 @@
 </template>
 
 <script>
+/**
+ * 根组件
+ * 包含全局导航和路由视图
+ */
 export default {
   name: 'App'
 }

@@ -62,20 +62,25 @@ export default {
   name: 'Home',
   data() {
     return {
-      config,
-      userList: [],
-      loading: false,
-      error: null
+      config,        // 全局配置对象
+      userList: [],  // 用户列表数据
+      loading: false, // 加载状态
+      error: null    // 错误信息
     }
   },
   methods: {
+    /**
+     * 获取用户列表
+     * 调用后端接口：GET /system/user/list
+     */
     async fetchUserList() {
       this.loading = true
       this.error = null
       
       try {
+        // 调用 API，后端返回格式：{ code: 200, msg: '操作成功', data: [...] }
         const response = await getUserList()
-        // 后端返回格式：{ code: 200, msg: '操作成功', data: [...] }
+        
         if (response.code === 200) {
           this.userList = response.data || []
         } else {

@@ -7,6 +7,9 @@
 </template>
 
 <script>
+/**
+ * 关于页面组件
+ */
 export default {
   name: 'About'
 }
