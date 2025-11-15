@@ -28,15 +28,10 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 从 localStorage 获取 token 并添加到请求头
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    
-    // 开发环境下打印请求信息，方便调试
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[${config.method.toUpperCase()}] ${config.url}`, config)
-    }
+    // const token = localStorage.getItem('token')
+    // if (token) {
+    //   config.headers.Authorization = `Bearer ${token}`
+    // }
     
     return config
   },
@@ -85,7 +80,7 @@ service.interceptors.response.use(
           console.error(`连接错误 ${error.response.status}`)
       }
     } else {
-      console.error('网络连接异常，请检查网络')
+      console.error('网络连接异常，请检查网络: ',error)
     }
     
     return Promise.reject(error)
