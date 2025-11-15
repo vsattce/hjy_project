@@ -47,3 +47,4 @@ nbdist/
 !*/build/*.xml
 /.xcodemap/
 .vscode/
+web-ui/node_modules/
