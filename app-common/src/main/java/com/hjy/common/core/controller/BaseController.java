@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hjy.common.core.domain.AjaxResult;
 import com.hjy.common.core.service.IBaseService;
+import com.hjy.common.utils.DateUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +37,20 @@ public class BaseController<S extends IBaseService<T>, T> {
     @Getter
     @Autowired(required = false)
     private S baseService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder)
+    {
+        // Date 类型转换
+        binder.registerCustomEditor(Date.class, new PropertyEditorSupport()
+        {
+            @Override
+            public void setAsText(String text)
+            {
+                setValue(DateUtils.parseDate(text));
+            }
+        });
+    }
 
     /**
      * 查询通用对象列表（不分页）
