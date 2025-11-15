@@ -8,8 +8,8 @@ spring:
     username: root
     password: 123456Asd
   jackson:
-#    date-format: yyyy-MM-dd HH:mm:ss # 全局时间格式
-    time-zone: GMT+8 # 指定默认时区，除非时间字段已指定时区，否则 JSON 序列化时都会使用此时区
+    date-format: yyyy-MM-dd HH:mm:ss # 全局时间格式
+    time-zone: GMT+8 # 指定默认时区，不然数据会出现传输变成标准时区的问题
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
