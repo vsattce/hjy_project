@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hjy.common.core.domain.AjaxResult;
 import com.hjy.common.core.service.IBaseService;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,10 @@ public class BaseController<S extends IBaseService<T>, T> {
      */
     private static final int MAX_BATCH_SIZE = 1000;
 
+    @Getter
     @Autowired(required = false)
     private S baseService;
 
-    public S getBaseService() {
-        return baseService;
-    }
     /**
      * 查询通用对象列表（不分页）
      *

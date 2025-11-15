@@ -7,6 +7,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.EqualsAndHashCode;
 
 /**
  * Entity基类
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @author ruoyi
  */
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class BaseEntity implements Serializable
 {
