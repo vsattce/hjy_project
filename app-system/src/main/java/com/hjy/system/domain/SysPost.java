@@ -16,9 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysPost extends BaseEntity
 {
-    @TableId(value = "post_id", type = IdType.AUTO)
-    private Long id;
     /** 岗位序号 */
+    @TableId(value = "post_id", type = IdType.AUTO)
     private Long postId;
 
     /** 岗位编码 */

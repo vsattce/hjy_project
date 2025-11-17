@@ -18,9 +18,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysLogininfor extends BaseEntity
 {
-    @TableId(value = "info_id", type = IdType.AUTO)
-    private Long id;
     /** ID */
+    @TableId(value = "info_id", type = IdType.AUTO)
     private Long infoId;
 
     /** 用户账号 */

@@ -16,9 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysMenu extends BaseEntity
 {
-    @TableId(value = "menu_id", type = IdType.AUTO)
-    private Long id;
     /** 菜单ID */
+    @TableId(value = "menu_id", type = IdType.AUTO)
     private Long menuId;
 
     /** 菜单名称 */

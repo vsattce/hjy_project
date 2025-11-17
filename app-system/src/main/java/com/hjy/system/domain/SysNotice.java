@@ -16,9 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysNotice extends BaseEntity
 {
-    @TableId(value = "notice_id", type = IdType.AUTO)
-    private Long id;
     /** 公告ID */
+    @TableId(value = "notice_id", type = IdType.AUTO)
     private Long noticeId;
 
     /** 公告标题 */

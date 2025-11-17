@@ -16,9 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysDept extends BaseEntity
 {
-    @TableId(value = "dept_id", type = IdType.AUTO)
-    private Long id;
     /** 部门id */
+    @TableId(value = "dept_id", type = IdType.AUTO)
     private Long deptId;
 
     /** 父部门id */

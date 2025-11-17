@@ -16,9 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysRole extends BaseEntity
 {
-    @TableId(value = "role_id", type = IdType.AUTO)
-    private Long id;
     /** 角色ID */
+    @TableId(value = "role_id", type = IdType.AUTO)
     private Long roleId;
 
     /** 角色名称 */

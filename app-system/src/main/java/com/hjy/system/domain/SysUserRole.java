@@ -1,8 +1,9 @@
 package com.hjy.system.domain;
 
-import com.hjy.common.core.domain.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * 用户和角色关联 sys_user_role
@@ -10,13 +11,13 @@ import lombok.EqualsAndHashCode;
  * @author ruoyi
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class SysUserRole extends BaseEntity
+@TableName("sys_user_role")
+public class SysUserRole
 {
     /** 用户ID */
+    @TableId(type = IdType.INPUT)
     private Long userId;
     
     /** 角色ID */
     private Long roleId;
-
 }

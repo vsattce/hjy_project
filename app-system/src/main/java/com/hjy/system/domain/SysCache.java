@@ -1,5 +1,7 @@
 package com.hjy.system.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
 
 import lombok.Data;
@@ -18,6 +20,7 @@ public class SysCache extends BaseEntity
     private String cacheName = "";
 
     /** 缓存键名 */
+    @TableId(type = IdType.INPUT)
     private String cacheKey = "";
 
     /** 缓存内容 */

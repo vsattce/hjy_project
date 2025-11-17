@@ -16,9 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysUser extends BaseEntity
 {
-    @TableId(value = "user_id", type = IdType.AUTO)
-    private Long id;
     /** 用户ID */
+    @TableId(value = "user_id", type = IdType.AUTO)
     private Long userId;
 
     /** 部门ID */

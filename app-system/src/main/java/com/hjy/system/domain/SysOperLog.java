@@ -18,9 +18,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysOperLog extends BaseEntity
 {
-    @TableId(value = "oper_id", type = IdType.AUTO)
-    private Long id;
     /** 日志主键 */
+    @TableId(value = "oper_id", type = IdType.AUTO)
     private Long operId;
 
     /** 操作模块 */

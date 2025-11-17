@@ -23,9 +23,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysConfig extends BaseEntity
 {
-    @TableId(value = "config_id", type = IdType.AUTO)
-    private Long id;
     /** 参数主键 */
+    @TableId(value = "config_id", type = IdType.AUTO)
     private Long configId;
 
     /** 参数名称 */

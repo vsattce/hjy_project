@@ -16,9 +16,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysDictData extends BaseEntity
 {
-    @TableId(value = "dict_code", type = IdType.AUTO)
-    private Long id;
+//    private Long id;
     /** 字典编码 */
+    @TableId(value = "dict_code", type = IdType.AUTO)
     private Long dictCode;
 
     /** 字典排序 */
