@@ -2,6 +2,7 @@ package com.hjy.system.domain;
 
 //import com.ruoyi.common.annotation.Excel;
 //import com.ruoyi.common.annotation.Excel.ColumnType;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
@@ -22,6 +23,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysConfig extends BaseEntity
 {
+    @TableId(value = "config_id", type = IdType.AUTO)
+    private Long id;
     /** 参数主键 */
     private Long configId;
 

@@ -1,7 +1,7 @@
 package com.hjy.system.domain;
 
 import com.hjy.common.core.domain.BaseEntity;
-import com.hjy.common.utils.StringUtils;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

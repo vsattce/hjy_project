@@ -1,7 +1,11 @@
 package com.hjy.system.domain;
 
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,6 +18,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysLogininfor extends BaseEntity
 {
+    @TableId(value = "info_id", type = IdType.AUTO)
+    private Long id;
     /** ID */
     private Long infoId;
 

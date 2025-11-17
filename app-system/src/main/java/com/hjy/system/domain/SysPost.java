@@ -1,6 +1,9 @@
 package com.hjy.system.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysPost extends BaseEntity
 {
+    @TableId(value = "post_id", type = IdType.AUTO)
+    private Long id;
     /** 岗位序号 */
     private Long postId;
 

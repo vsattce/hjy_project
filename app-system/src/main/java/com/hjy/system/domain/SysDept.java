@@ -1,6 +1,9 @@
 package com.hjy.system.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class SysDept extends BaseEntity
 {
+    @TableId(value = "dept_id", type = IdType.AUTO)
+    private Long id;
     /** 部门id */
     private Long deptId;
 
