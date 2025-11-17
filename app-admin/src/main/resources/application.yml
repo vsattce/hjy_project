@@ -21,10 +21,15 @@ mybatis-plus:
 logging:
   level:
     com.hjy: debug
-
+knife4j:
+  enable: true
 # 项目相关配置
 App:
   # 名称
   name: hjy-app
   # 版本
   version: 0.0.1
+#springdoc:
+#  api-docs:
+#    enabled: true
+#    title:

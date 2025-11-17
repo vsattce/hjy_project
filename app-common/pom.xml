@@ -49,9 +49,8 @@
         </dependency>
         <!-- swagger3-->
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-<!--            <version>2.5.0</version> &lt;!&ndash; 推荐使用 2.x 版本，与 Spring Boot 3 兼容 &ndash;&gt;-->
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
         </dependency>
 
     </dependencies>
