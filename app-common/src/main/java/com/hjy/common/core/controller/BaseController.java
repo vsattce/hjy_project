@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hjy.common.core.domain.AjaxResult;
 import com.hjy.common.core.service.IBaseService;
 import com.hjy.common.utils.DateUtils;
-import io.swagger.annotations.ApiOperation;
+//import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class BaseController<S extends IBaseService<T>, T> {
      * @param parameters 额外查询参数
      * @return 查询结果列表
      */
-    @ApiOperation( "查询通用对象")
+    @Operation(summary = "查询通用对象列表（不分页）")
     @GetMapping("/list")
     public AjaxResult list(T entity, @RequestParam Map<String, Object> parameters) {
         logger.debug("查询列表，参数: {}", parameters);
@@ -76,7 +77,7 @@ public class BaseController<S extends IBaseService<T>, T> {
      * @param parameters 额外查询参数
      * @return 分页查询结果
      */
-    @ApiOperation( "查询分页对象")
+    @Operation(summary = "分页查询通用对象")
     @GetMapping("/page")
     public AjaxResult page(Page<T> page, T entity, @RequestParam Map<String, Object> parameters) {
         logger.debug("分页查询，页码: {}, 每页数量: {}", page.getCurrent(), page.getSize());
@@ -90,7 +91,7 @@ public class BaseController<S extends IBaseService<T>, T> {
      * @param id 对象ID
      * @return 对象详情
      */
-    @ApiOperation( "根据ID获取通用对象详细信息")
+    @Operation(summary = "根据ID获取通用对象详细信息")
     @GetMapping("/{id}")
     public AjaxResult getById(@PathVariable Long id) {
         logger.debug("查询详情，ID: {}", id);
@@ -112,7 +113,7 @@ public class BaseController<S extends IBaseService<T>, T> {
      * @param entity 待新增的实体对象
      * @return 操作结果
      */
-    @ApiOperation( "新增通用对象")
+    @Operation(summary = "新增通用对象")
     @PostMapping
     public AjaxResult save(@RequestBody T entity) {
         logger.info("新增数据: {}", entity);
@@ -126,7 +127,7 @@ public class BaseController<S extends IBaseService<T>, T> {
      * @param entity 待修改的实体对象
      * @return 操作结果
      */
-    @ApiOperation( "修改通用对象")
+    @Operation(summary = "修改通用对象")
     @PutMapping
     public AjaxResult updateById(@RequestBody T entity) {
         logger.info("修改数据: {}", entity);
@@ -140,7 +141,7 @@ public class BaseController<S extends IBaseService<T>, T> {
      * @param ids 待删除的ID数组
      * @return 操作结果
      */
-    @ApiOperation( "批量删除通用对象")
+    @Operation(summary = "批量删除通用对象")
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         if (ids == null || ids.length == 0) {
@@ -160,7 +161,7 @@ public class BaseController<S extends IBaseService<T>, T> {
      * @param entity 待保存的实体对象
      * @return 操作结果
      */
-    @ApiOperation( "新增或修改通用对象")
+    @Operation(summary = "新增或修改通用对象")
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody T entity) {
         logger.info("保存或更新数据: {}", entity);
