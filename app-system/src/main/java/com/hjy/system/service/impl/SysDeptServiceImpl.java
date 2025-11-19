@@ -1,6 +1,6 @@
 package com.hjy.system.service.impl;
 
-import com.hjy.system.domain.SysDept;
+import com.hjy.common.core.domain.entity.SysDept;
 import com.hjy.common.core.service.impl.BaseServiceImpl;
 import com.hjy.system.mapper.SysDeptMapper;
 import com.hjy.system.service.ISysDeptService;

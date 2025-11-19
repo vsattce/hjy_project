@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hjy.common.core.controller.BaseController;
-import com.hjy.system.domain.SysUser;
+import com.hjy.common.core.domain.entity.SysUser;
 import com.hjy.system.service.impl.SysUserServiceImpl;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

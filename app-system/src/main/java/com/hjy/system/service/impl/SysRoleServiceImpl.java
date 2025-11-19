@@ -1,6 +1,6 @@
 package com.hjy.system.service.impl;
 
-import com.hjy.system.domain.SysRole;
+import com.hjy.common.core.domain.entity.SysRole;
 import com.hjy.common.core.service.impl.BaseServiceImpl;
 import com.hjy.system.mapper.SysRoleMapper;
 import com.hjy.system.service.ISysRoleService;

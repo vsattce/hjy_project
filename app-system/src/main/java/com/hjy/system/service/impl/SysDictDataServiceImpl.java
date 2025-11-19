@@ -1,6 +1,6 @@
 package com.hjy.system.service.impl;
 
-import com.hjy.system.domain.SysDictData;
+import com.hjy.common.core.domain.entity.SysDictData;
 import com.hjy.common.core.service.impl.BaseServiceImpl;
 import com.hjy.system.mapper.SysDictDataMapper;
 import com.hjy.system.service.ISysDictDataService;

@@ -1,7 +1,7 @@
 package com.hjy.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.hjy.system.domain.SysRole;
+import com.hjy.common.core.domain.entity.SysRole;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
