@@ -1,5 +1,7 @@
 package com.hjy.common.constant;
 
+import io.jsonwebtoken.Claims;
+
 import java.util.Locale;
 
 public class Constants {
@@ -113,7 +115,7 @@ public class Constants {
     /**
      * 用户名称
      */
-//    public static final String JWT_USERNAME = Claims.SUBJECT;
+    public static final String JWT_USERNAME = Claims.SUBJECT;
 
     /**
      * 用户头像

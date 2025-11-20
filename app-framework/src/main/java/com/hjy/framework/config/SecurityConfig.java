@@ -1,62 +1,81 @@
 package com.hjy.framework.config;
 
+import com.hjy.framework.security.filter.AuthenticationTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 @Configuration
 public class SecurityConfig {
+    /**
+     * 自定义用户认证逻辑
+     */
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private AuthenticationTokenFilter authenticationTokenFilter;
+
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        return username -> User.withDefaultPasswordEncoder()
+//                .username("user")
+//                .password("password")
+//                .roles("USER")
+//                .build();
+//    }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
+
+        return new ProviderManager(authenticationProvider);
     }
 
     @Bean
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->
-                        requests.requestMatchers("/login", "/register").permitAll()
+                        requests.requestMatchers("/login").permitAll()
                                 .anyRequest().authenticated())
+//                开启跨域，和原来的mvc配置的是单独的，需要两者都开放或者只配一个
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 👇 重点：启用表单登录（但返回JSON，不是跳页面！）
-                .formLogin(form -> form
-                        .loginProcessingUrl("/api/auth/login") // 自定义登录接口
-                        .successHandler((req, res, auth) -> {
-                            res.setContentType("application/json");
-                            res.getWriter().write("{\"success\": true, \"message\": \"Login successful!\"}");
-                        })
-                        .failureHandler((req, res, ex) -> {
-                            res.setStatus(401);
-                            res.setContentType("application/json");
-                            res.getWriter().write("{\"success\": false, \"error\": \"Invalid credentials\"}");
-                        })
-                )
+//                关闭session，不会再有Set-Cookies的返回
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
+                        .logoutUrl("/logout")
                         .logoutSuccessHandler((req, res, auth) -> {
                             res.setContentType("application/json");
                             res.getWriter().write("{\"success\": true, \"message\": \"Logout successful!\"}");
                         })
-                );
+                )
+                //在用户密码过滤器前添加一个token自定义的过滤器
+                .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                // 禁用表单登录
+                .formLogin(AbstractHttpConfigurer::disable)
+                // 禁用浏览器弹窗认证
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

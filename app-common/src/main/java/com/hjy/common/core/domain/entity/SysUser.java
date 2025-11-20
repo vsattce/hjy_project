@@ -7,6 +7,8 @@ import com.hjy.common.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 用户对象 sys_user
  * 
@@ -58,4 +60,9 @@ public class SysUser extends BaseEntity
 
     /** 最后登录时间 */
     private java.util.Date loginDate;
+
+    private SysDept dept;
+
+    /** 角色对象 */
+    private List<SysRole> roles;
 }

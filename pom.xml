@@ -77,6 +77,11 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.18.0</version>
             </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>0.12.5</version>
+            </dependency>
             <!-- 请使用这个依赖来替代 springdoc-openapi-starter-webmvc-ui -->
 <!--            重要提示：Knife4j 的依赖已经包含了 springdoc-openapi-starter-webmvc-ui，-->
 <!--            所以你不需要再单独引入 SpringDoc 的任何依赖。只需要这一个就够了。-->
@@ -121,6 +126,7 @@
 
         </dependencies>
     </dependencyManagement>
+
 
     <!-- 打包类型：pom 表示这是一个父项目，用于聚合多个子模块 -->
     <packaging>pom</packaging>

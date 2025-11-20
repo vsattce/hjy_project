@@ -17,6 +17,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
 
         <!-- SpringWeb模块 -->
         <dependency>
@@ -40,8 +44,16 @@
         </dependency>
 
         <dependency>
-            <groupId>com.hjy</groupId>
-            <artifactId>app-framework</artifactId>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <!-- 使用 Hutool 模块时，不用写版本号 -->
         <dependency>
