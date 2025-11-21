@@ -28,10 +28,10 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 从 localStorage 获取 token 并添加到请求头
-    // const token = localStorage.getItem('token')
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`
-    // }
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     
     return config
   },
@@ -66,6 +66,9 @@ service.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           console.error('未授权，请重新登录')
+          // 清除 token 并跳转到登录页
+          localStorage.removeItem('token')
+          window.location.href = '/login'
           break
         case 403:
           console.error('拒绝访问')

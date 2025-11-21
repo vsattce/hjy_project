@@ -1,9 +1,11 @@
 package com.hjy.common.core.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
 
+import com.hjy.common.core.domain.TreeBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,12 +21,15 @@ public class SysMenu extends BaseEntity
     /** 菜单ID */
     @TableId(value = "menu_id", type = IdType.AUTO)
     private Long menuId;
-
+    // 1. 重新声明 id 字段
+    // 2. 加上 exist = false，告诉 MP 忽略它
+//    @TableField(exist = false)
+//    private Long id;
     /** 菜单名称 */
     private String menuName;
 
     /** 父菜单ID */
-    private Long parentId;
+//    private Long parentId;
 
     /** 显示顺序 */
     private Integer orderNum;

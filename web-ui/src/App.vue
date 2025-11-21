@@ -1,45 +1,52 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">首页</router-link> |
-      <router-link to="/about">关于</router-link>
-    </nav>
     <router-view/>
   </div>
 </template>
 
-<script>
+<script setup>
 /**
  * 根组件
  * 包含全局导航和路由视图
  */
-export default {
-  name: 'App'
-}
 </script>
 
-<style>
+<style lang="less">
+@primary-color: #409EFF;
+@text-color: #2c3e50;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: @text-color;
+  height: 100%;
+  width: 100%;
 }
 
 nav {
   padding: 20px;
-}
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-  text-decoration: none;
-  margin: 0 10px;
-}
+  a {
+    font-weight: bold;
+    color: @text-color;
+    text-decoration: none;
+    margin: 0 10px;
 
-nav a.router-link-exact-active {
-  color: #42b983;
+    &.router-link-exact-active {
+      color: @primary-color;
+    }
+  }
 }
 </style>

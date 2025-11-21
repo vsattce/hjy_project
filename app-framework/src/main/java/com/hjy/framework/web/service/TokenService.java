@@ -5,7 +5,11 @@ import com.hjy.common.constant.CacheConstants;
 import com.hjy.common.constant.Constants;
 import com.hjy.common.core.domain.model.LoginUser;
 import com.hjy.common.core.redis.RedisCache;
+import com.hjy.common.utils.ServletUtils;
 import com.hjy.common.utils.StringUtils;
+import com.hjy.common.utils.ip.AddressUtils;
+import com.hjy.common.utils.ip.IpUtils;
+import eu.bitwalker.useragentutils.UserAgent;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,6 +58,7 @@ public class TokenService {
     public String createToken(LoginUser loginUser) {
         String token = IdUtil.fastUUID();
         loginUser.setToken(token);
+        setUserAgent(loginUser);
         refreshToken(loginUser);
 
         Map<String, Object> claims = new HashMap<>();
@@ -61,6 +66,20 @@ public class TokenService {
         claims.put(Constants.JWT_USERNAME, loginUser.getUsername());
 
         return createToken(claims);
+    }
+    /**
+     * 设置用户代理信息
+     *
+     * @param loginUser 登录信息
+     */
+    public void setUserAgent(LoginUser loginUser)
+    {
+        UserAgent userAgent = UserAgent.parseUserAgentString(ServletUtils.getRequest().getHeader("User-Agent"));
+        String ip = IpUtils.getIpAddr();
+        loginUser.setIpaddr(ip);
+        loginUser.setLoginLocation(AddressUtils.getRealAddressByIP(ip));
+        loginUser.setBrowser(userAgent.getBrowser().getName());
+        loginUser.setOs(userAgent.getOperatingSystem().getName());
     }
 
     /**
@@ -90,6 +109,16 @@ public class TokenService {
                 .compact();
     }
 
+    public void verifyToken(LoginUser loginUser)
+    {
+        long expireTime = loginUser.getExpireTime();
+        long currentTime = System.currentTimeMillis();
+        if (expireTime - currentTime <= MILLIS_MINUTE_TWENTY)
+        {
+            refreshToken(loginUser);
+        }
+    }
+
     /**
      * 获取用户身份信息
      *
@@ -100,13 +129,13 @@ public class TokenService {
         // 获取请求携带的令牌
         String token = getToken(request);
         if (StringUtils.isNotEmpty(token)
-         || !Objects.equals(token, "null")) {
+         && !Objects.equals(token, "null")) {
             try {
                 Claims claims = parseToken(token);
                 String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
                 String userKey = getTokenKey(uuid);
-
-                return redisCache.getCacheObject(userKey);
+                LoginUser lu = redisCache.getCacheObject(userKey);
+                return lu;
             } catch (Exception e) {
                 System.out.println("parseToken error = " + e);
             }

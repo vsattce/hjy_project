@@ -10,7 +10,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 module.exports = defineConfig({
   // 需要转译的依赖包
   transpileDependencies: true,
-  
+  lintOnSave: false,
   /**
    * 开发服务器配置
    */

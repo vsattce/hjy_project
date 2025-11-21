@@ -38,6 +38,9 @@ mybatis-plus:
   type-aliases-package: com.hjy.**.domain
   configuration:
     map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      where-strategy: not-empty
 
 # 日志配置
 logging:
@@ -51,10 +54,14 @@ App:
   name: hjy-app
   # 版本
   version: 0.0.1
-#springdoc:
-#  api-docs:
-#    enabled: true
-#    title:
+  # 版权年份
+  copyrightYear: 2025
+  # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
+  profile: D:/ruoyi/uploadPath
+  # 获取ip地址开关
+  addressEnabled: false
+  # 验证码类型 math 数字计算 char 字符验证
+  captchaType: math
 
 token:
   # 令牌自定义标识

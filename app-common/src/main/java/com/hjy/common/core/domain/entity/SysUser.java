@@ -1,6 +1,7 @@
 package com.hjy.common.core.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
 
@@ -61,8 +62,10 @@ public class SysUser extends BaseEntity
     /** 最后登录时间 */
     private java.util.Date loginDate;
 
+    @TableField(exist = false)
     private SysDept dept;
 
     /** 角色对象 */
+    @TableField(exist = false)
     private List<SysRole> roles;
 }

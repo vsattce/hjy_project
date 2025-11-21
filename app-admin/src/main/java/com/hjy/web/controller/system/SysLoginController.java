@@ -3,6 +3,7 @@ package com.hjy.web.controller.system;
 import com.hjy.common.constant.Constants;
 import com.hjy.common.core.domain.AjaxResult;
 import com.hjy.common.core.domain.model.LoginBody;
+import com.hjy.common.utils.StringUtils;
 import com.hjy.framework.web.service.SysLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,11 +27,14 @@ public class SysLoginController {
         AjaxResult ajax = AjaxResult.success();
         System.out.printf("loginBody = " + loginBody);
 //        // 生成令牌
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginBody.getUsername(), loginBody.getPassword());
-//        authenticationManager.authenticate(authenticationToken);
         String token = sysLoginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
-        ajax.put(Constants.TOKEN, token);
+        if (StringUtils.isNotEmpty(token)) {
+            ajax.put(Constants.TOKEN, token);
+        }else {
+            ajax = AjaxResult.error("登录失败");
+        }
+//
         return ajax;
     }
 }

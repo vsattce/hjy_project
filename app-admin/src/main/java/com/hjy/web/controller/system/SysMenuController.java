@@ -1,5 +1,6 @@
 package com.hjy.web.controller.system;
 
+import com.hjy.common.core.controller.TreeBaseController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

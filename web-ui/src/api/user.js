@@ -21,7 +21,7 @@ export function getUserList(params) {
 /**
  * 分页查询用户列表
  * @param {Object} params - 分页参数 { current: 页码, size: 每页数量 }
- * @returns {Promise} 返回分页数据 { records: [], total: 0, size: 10, current: 1 }
+ * @returns {Promise} 返回分页数据
  */
 export function getUserPage(params) {
   return request({
@@ -82,14 +82,15 @@ export function deleteUser(ids) {
 }
 
 /**
- * 保存或更新用户（有 ID 则更新，无 ID 则新增）
- * @param {Object} data - 用户信息
+ * 重置用户密码
+ * @param {Number} userId - 用户ID
+ * @param {String} password - 新密码
  * @returns {Promise}
  */
-export function saveOrUpdateUser(data) {
+export function resetUserPwd(userId, password) {
   return request({
-    url: '/system/user/saveOrUpdate',
-    method: 'post',
-    data
+    url: '/system/user/resetPwd',
+    method: 'put',
+    data: { userId, password }
   })
 }
