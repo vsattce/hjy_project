@@ -1,6 +1,7 @@
 package com.hjy.framework.config;
 
 import com.hjy.framework.security.filter.AuthenticationTokenFilter;
+import com.hjy.framework.security.handle.LogoutSuccessHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,12 @@ public class SecurityConfig {
      */
     @Autowired
     private UserDetailsService userDetailsService;
+
+    /**
+     * 退出处理类
+     */
+    @Autowired
+    private LogoutSuccessHandlerImpl logoutSuccessHandler;
 
     @Autowired
     private AuthenticationTokenFilter authenticationTokenFilter;
@@ -65,10 +72,7 @@ public class SecurityConfig {
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessHandler((req, res, auth) -> {
-                            res.setContentType("application/json");
-                            res.getWriter().write("{\"success\": true, \"message\": \"Logout successful!\"}");
-                        })
+                        .logoutSuccessHandler(logoutSuccessHandler)
                 )
                 //在用户密码过滤器前添加一个token自定义的过滤器
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)

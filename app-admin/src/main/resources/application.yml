@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: /
 spring:
+  # 资源信息
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
   datasource:
     url: jdbc:mysql://rm-bp1gvs3ti016zt2hpvo.mysql.rds.aliyuncs.com:3306/ry-vue?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
     username: root
