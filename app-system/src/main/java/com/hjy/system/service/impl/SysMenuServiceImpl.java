@@ -8,6 +8,6 @@ import com.hjy.system.service.ISysMenuService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
+public class SysMenuServiceImpl extends TreeBaseServiceImpl<SysMenuMapper, SysMenu,Long> implements ISysMenuService {
     
 }

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
 
+import com.hjy.common.core.domain.TreeBaseEntity;
+import com.hjy.common.core.domain.TreeEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +17,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class SysDept extends BaseEntity
+public class SysDept extends TreeBaseEntity<SysDept,Long> implements TreeEntity<SysDept,Long>
 {
     /** 部门id */
     @TableId(value = "dept_id", type = IdType.AUTO)
@@ -50,4 +52,10 @@ public class SysDept extends BaseEntity
 
     @TableField(exist = false)
     private Long remark;
+
+
+    @Override
+    public Long getId() {
+        return this.deptId;
+    }
 }

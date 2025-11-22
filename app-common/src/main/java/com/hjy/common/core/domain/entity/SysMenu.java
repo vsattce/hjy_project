@@ -6,8 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.hjy.common.core.domain.BaseEntity;
 
 import com.hjy.common.core.domain.TreeBaseEntity;
+import com.hjy.common.core.domain.TreeEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 菜单权限表 sys_menu
@@ -16,7 +20,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class SysMenu extends BaseEntity
+public class SysMenu extends TreeBaseEntity<SysMenu,Long> implements TreeEntity<SysMenu,Long>
 {
     /** 菜单ID */
     @TableId(value = "menu_id", type = IdType.AUTO)
@@ -28,9 +32,11 @@ public class SysMenu extends BaseEntity
     /** 菜单名称 */
     private String menuName;
 
-    /** 父菜单ID */
+//    /** 父菜单ID */
 //    private Long parentId;
-
+////
+////    @TableField(exist = false)
+//    private List<SysMenu> children;
     /** 显示顺序 */
     private Integer orderNum;
 
@@ -63,4 +69,19 @@ public class SysMenu extends BaseEntity
 
     /** 菜单图标 */
     private String icon;
+
+    @Override
+    public Long getId() {
+        return this.menuId;
+    }
+
+//    @Override
+//    public void setChildren(List<SysMenu> children) {
+//        return ;
+//    }
+
+//    @Override
+//    public void setChildren(List<SysMenu> children) {
+//
+//    }
 }

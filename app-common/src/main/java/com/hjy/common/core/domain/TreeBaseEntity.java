@@ -1,5 +1,6 @@
 package com.hjy.common.core.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Alias("treeBaseEntity")//别名，防止mybatis和ruoyi的名字冲突
-public class TreeBaseEntity implements Serializable {
+public class TreeBaseEntity<T,ID> implements Serializable {
    // private static final long serialVersionUID = 1L;
     /**
      * 节点ID
@@ -32,28 +33,31 @@ public class TreeBaseEntity implements Serializable {
     /**
      * 父ID
      */
-    private Integer parentId;
-
+    private ID parentId;
+//    getParentId
     /**
      * 节点代码
      */
-    private String code;
+//    private String code;
 
     /**
      * 节点名称
      */
-    private String name;
+//    private String name;
 
     /**
      * 是否启用(0不启用,1启用)
      */
-    private String enable;
+//    private String enable;
 
     /**
      * 子节点
      */
-    private List<TreeBaseEntity> children;
-
+    @TableField(exist = false)
+    private List<T> children;
+//    ID getId();                 // 获取主键
+//    ID getParentId();           // 获取父ID
+//    void setChildren(List<T> children); // 设置子节点
     /**
      * 根据普通的节点集合构建树形结构
      *

@@ -13,20 +13,8 @@ import java.util.List;
  * @author xucy
  * @date 2023/09/07
  */
-public interface ITreeBaseService<T>  extends IBaseService<T> {
-    /**
-     * 查询通用通用对象，转化成树形结构
-     * @param id id 不能为空
-     * @return 树形结构
-     *
-     */
-    TreeBaseEntity list4treeById(Integer id);
+public interface ITreeBaseService<T,ID>  extends IBaseService<T> {
 
-    /**
-     * 查询通用通用对象，转化成树形结构
-     * param parentId 父节点id 默认0
-     * @return 树形结构
-     *
-     */
-    List<TreeBaseEntity> list4treeByParentId(Integer parentId);
+    List<T> list4treeByRoot(ID root);
+
 }
