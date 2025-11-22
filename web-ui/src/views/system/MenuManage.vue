@@ -220,7 +220,7 @@ const handleDelete = async (id) => {
 // 验证图标名称是否有效
 const isValidIconName = (iconName) => {
   if (!iconName || typeof iconName !== 'string') return false
-  const invalidChars = /[#<>\/\\]/
+  const invalidChars = /[#<>/\\]/
   return !invalidChars.test(iconName) && iconName.length > 0
 }
 

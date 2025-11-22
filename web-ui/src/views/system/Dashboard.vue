@@ -151,7 +151,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import request from '@/utils/request'
+// import request from '@/utils/request'
 
 const router = useRouter()
 const username = ref(localStorage.getItem('username') || '管理员')

@@ -9,6 +9,9 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { createPinia } from 'pinia'
+
+import DictTag from '@/components/DictTag'
 
 const app = createApp(App)
 
@@ -17,5 +20,10 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
+app.component('DictTag',DictTag)
+
 // 创建应用实例，注册路由和 Element Plus，挂载到 #app 元素
-app.use(router).use(ElementPlus, { locale: zhCn }).mount('#app')
+app.use(router)
+.use(ElementPlus, { locale: zhCn })
+.use(createPinia())
+.mount('#app')

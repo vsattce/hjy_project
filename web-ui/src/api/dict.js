@@ -98,6 +98,7 @@ export function getDictDataList(params) {
   })
 }
 
+
 /**
  * 分页查询字典数据列表
  * @param {Object} params - 分页参数 { current: 页码, size: 每页数量 }
@@ -118,8 +119,11 @@ export function getDictDataPage(params) {
  */
 export function getDictDataByType(dictType) {
   return request({
-    url: `/system/dict/data/type/${dictType}`,
-    method: 'get'
+    url: '/system/dict/data/list',
+    method: 'get',
+    params:{
+      dictType
+    }
   })
 }
 

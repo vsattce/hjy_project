@@ -4,13 +4,14 @@
  * 文档：https://cli.vuejs.org/config/
  */
 const { defineConfig } = require('@vue/cli-service')
-
+const AutoImport = require('unplugin-auto-import/webpack')
+const path = require('path')
 const isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = defineConfig({
   // 需要转译的依赖包
   transpileDependencies: true,
-  lintOnSave: false,
+  
   /**
    * 开发服务器配置
    */
@@ -68,6 +69,32 @@ module.exports = defineConfig({
           }
         }
       }
-    } : {}
+    } : {},
+    plugins: [
+      // 自动导入常用模块，减少手动 import
+      AutoImport({
+        // 自动引入 Vue, Pinia, VueRouter 等官方库
+        imports: ['vue', 'vue-router', 'pinia'],
+        
+        // 自动引入你的 hooks 目录下的函数
+        dirs: [
+          './src/hooks'
+        ],
+
+        // 既然你是 JS 项目，关掉 d.ts 生成
+        dts: false,
+        // 开启 ESLint 配置文件生成 (必须开，不然编辑器爆红)
+        eslintrc: {
+          enabled: true,
+          filepath: './.eslintrc-auto-import.json', 
+          globalsPropValue: true,
+        },
+      })
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src')
+      }
+    }
   }
 })

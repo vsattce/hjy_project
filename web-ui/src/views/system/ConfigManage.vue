@@ -50,9 +50,7 @@
         <el-table-column prop="configValue" label="配置键值" min-width="150" show-overflow-tooltip />
         <el-table-column prop="configType" label="系统内置" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.configType === 'Y' ? 'success' : 'info'">
-              {{ row.configType === 'Y' ? '是' : '否' }}
-            </el-tag>
+            <dict-tag :options="sys_yes_no" :value="row.configType" />
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" />
@@ -141,11 +139,14 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getConfigPage, addConfig, updateConfig, deleteConfig } from '@/api/config'
+// import { useDict } from '@/hooks/useDict'
 
 const searchForm = reactive({
   configName: '',
   configKey: ''
 })
+
+const {sys_yes_no} = useDict("sys_yes_no")
 
 const tableData = ref([])
 const selectedRows = ref([])
@@ -169,6 +170,7 @@ const paginationReactive = reactive({
 })
 
 const loadData = async () => {
+  console.log(sys_yes_no.value)
   try {
     const params = {
       current: paginationReactive.page,
