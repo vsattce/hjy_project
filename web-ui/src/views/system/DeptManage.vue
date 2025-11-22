@@ -1,25 +1,23 @@
 <template>
   <div class="dept-page">
-    <!-- 搜索栏 -->
+    <!-- 操作栏 -->
     <el-card class="search-card" shadow="never">
-      <el-form :inline="true" :model="searchForm">
-        <el-form-item label="部门名称">
-          <el-input v-model="searchForm.deptName" placeholder="请输入部门名称" clearable />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="部门状态" clearable>
-            <el-option label="正常" value="0" />
-            <el-option label="停用" value="1" />
-          </el-select>
+      <el-form :inline="true">
+        <el-form-item label="选择根节点">
+          <el-tree-select
+            v-model="rootId"
+            :data="allDeptTree"
+            :props="{ label: 'deptName', value: 'deptId' }"
+            placeholder="请选择根节点部门"
+            check-strictly
+            clearable
+            style="width: 240px"
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">
-            <el-icon><Search /></el-icon>
-            <span>搜索</span>
-          </el-button>
-          <el-button @click="handleReset">
+          <el-button type="primary" @click="loadTreeData">
             <el-icon><Refresh /></el-icon>
-            <span>重置</span>
+            <span>刷新</span>
           </el-button>
           <el-button type="success" @click="handleAdd">
             <el-icon><Plus /></el-icon>
@@ -29,11 +27,18 @@
       </el-form>
     </el-card>
 
-    <!-- 表格 -->
+    <!-- 树形表格 -->
     <el-card class="table-card" shadow="never">
-      <el-table :data="tableData" style="width: 100%" row-key="deptId" default-expand-all>
+      <el-table 
+        :data="tableData" 
+        style="width: 100%" 
+        row-key="deptId" 
+        :tree-props="{ children: 'children' }"
+      >
         <el-table-column prop="deptName" label="部门名称" min-width="200" />
         <el-table-column prop="orderNum" label="排序" width="100" />
+        <el-table-column prop="leader" label="负责人" width="120" />
+        <el-table-column prop="phone" label="联系电话" width="130" />
         <el-table-column prop="status" label="状态" width="80">
           <template #default="{ row }">
             <el-tag :type="row.status === '0' ? 'success' : 'danger'">
@@ -57,7 +62,7 @@
         <el-form-item label="上级部门">
           <el-tree-select
             v-model="form.parentId"
-            :data="deptTree"
+            :data="tableData"
             :props="{ label: 'deptName', value: 'deptId' }"
             placeholder="请选择上级部门"
             check-strictly
@@ -96,17 +101,13 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getDeptList, getDeptTree, addDept, updateDept, deleteDept } from '@/api/dept'
-
-const searchForm = reactive({
-  deptName: '',
-  status: ''
-})
+import { getDeptTreeByRoot, addDept, updateDept, deleteDept } from '@/api/dept'
 
 const tableData = ref([])
-const deptTree = ref([])
+const allDeptTree = ref([]) // 所有部门树，用于根节点选择
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增部门')
+const rootId = ref(null)
 
 const form = reactive({
   deptId: null,
@@ -119,9 +120,21 @@ const form = reactive({
   status: '0'
 })
 
-const loadData = async () => {
+// 加载所有部门树（用于根节点选择）
+const loadAllDeptTree = async () => {
   try {
-    const response = await getDeptList(searchForm)
+    const response = await getDeptTreeByRoot(0)
+    if (response.code === 200) {
+      allDeptTree.value = response.data || []
+    }
+  } catch (error) {
+    console.error('加载部门树失败', error)
+  }
+}
+
+const loadTreeData = async () => {
+  try {
+    const response = await getDeptTreeByRoot(rootId.value||0)
     if (response.code === 200) {
       tableData.value = response.data || []
     }
@@ -130,29 +143,18 @@ const loadData = async () => {
   }
 }
 
-const loadDeptTree = async () => {
-  try {
-    const response = await getDeptTree()
-    if (response.code === 200) {
-      deptTree.value = response.data || []
-    }
-  } catch (error) {
-    console.error('加载部门树失败', error)
-  }
-}
-
-const handleSearch = () => {
-  loadData()
-}
-
-const handleReset = () => {
-  Object.assign(searchForm, { deptName: '', status: '' })
-  loadData()
-}
-
 const handleAdd = () => {
   dialogTitle.value = '新增部门'
-  Object.assign(form, { deptId: null, parentId: 0, deptName: '', orderNum: 0, leader: '', phone: '', email: '', status: '0' })
+  Object.assign(form, { 
+    deptId: null, 
+    parentId: 0, 
+    deptName: '', 
+    orderNum: 0, 
+    leader: '', 
+    phone: '', 
+    email: '', 
+    status: '0' 
+  })
   dialogVisible.value = true
 }
 
@@ -172,7 +174,7 @@ const handleSubmit = async () => {
       ElMessage.success('新增成功')
     }
     dialogVisible.value = false
-    loadData()
+    loadTreeData()
   } catch (error) {
     ElMessage.error('操作失败: ' + (error.message || '未知错误'))
   }
@@ -183,15 +185,17 @@ const handleDelete = async (id) => {
     await ElMessageBox.confirm('确定要删除吗？', '提示', { type: 'warning' })
     await deleteDept(id)
     ElMessage.success('删除成功')
-    loadData()
+    loadTreeData()
   } catch (error) {
-    if (error !== 'cancel') ElMessage.error('删除失败: ' + (error.message || '未知错误'))
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败: ' + (error.message || '未知错误'))
+    }
   }
 }
 
 onMounted(() => {
-  loadData()
-  loadDeptTree()
+  loadAllDeptTree()
+  loadTreeData()
 })
 </script>
 

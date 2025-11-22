@@ -43,6 +43,18 @@ export function getDeptTreeByParentId(parentId = 0) {
 }
 
 /**
+ * 根据根节点ID获取部门树形结构
+ * @param {Number} rootId - 根节点ID
+ * @returns {Promise} 返回部门树
+ */
+export function getDeptTreeByRoot(rootId) {
+  return request({
+    url: `/system/dept/list4treeByRoot/${rootId}`,
+    method: 'get'
+  })
+}
+
+/**
  * 根据 ID 获取部门详情
  * @param {Number} id - 部门ID
  * @returns {Promise} 返回部门详细信息

@@ -58,6 +58,18 @@ export function getMenuTreeById(id) {
 }
 
 /**
+ * 根据根节点ID获取菜单树形结构
+ * @param {Number} rootId - 根节点ID
+ * @returns {Promise} 返回菜单树
+ */
+export function getMenuTreeByRoot(rootId) {
+  return request({
+    url: `/system/menu/list4treeByRoot/${rootId}`,
+    method: 'get'
+  })
+}
+
+/**
  * 根据 ID 获取菜单详情
  * @param {Number} id - 菜单ID
  * @returns {Promise} 返回菜单详细信息
