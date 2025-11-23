@@ -1,11 +1,14 @@
 package com.hjy.framework.security.handle;
 
 import com.alibaba.fastjson2.JSON;
+import com.hjy.common.constant.Constants;
 import com.hjy.common.core.domain.AjaxResult;
 import com.hjy.common.core.domain.model.LoginUser;
 import com.hjy.common.utils.MessageUtils;
 import com.hjy.common.utils.ServletUtils;
 import com.hjy.common.utils.StringUtils;
+import com.hjy.framework.manager.AsyncManager;
+import com.hjy.framework.manager.factory.AsyncFactory;
 import com.hjy.framework.web.service.TokenService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +35,7 @@ public class LogoutSuccessHandlerImpl  implements LogoutSuccessHandler {
             // 删除用户缓存记录
             tokenService.delLoginUser(loginUser.getToken());
             // 记录用户退出日志
-//            AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGOUT, MessageUtils.message("user.logout.success")));
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGOUT, MessageUtils.message("user.logout.success")));
         }
         ServletUtils.renderString(response, JSON.toJSONString(AjaxResult.success(MessageUtils.message("user.logout.success"))));
     }

@@ -1,5 +1,6 @@
 package com.hjy.framework.config;
 
+import com.hjy.framework.security.filter.AuthenticationEntryPointImpl;
 import com.hjy.framework.security.filter.AuthenticationTokenFilter;
 import com.hjy.framework.security.handle.LogoutSuccessHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,11 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    /**
+     * 认证失败处理类
+     */
+    @Autowired
+    private AuthenticationEntryPointImpl unauthorizedHandler;
     /**
      * 退出处理类
      */
@@ -70,6 +76,8 @@ public class SecurityConfig {
 //                关闭session，不会再有Set-Cookies的返回
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                // 认证失败处理类
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessHandler(logoutSuccessHandler)

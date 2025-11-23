@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cn.hutool.core.text.StrFormatter;
 import com.hjy.common.constant.Constants;
 import org.springframework.util.AntPathMatcher;
 //import com.hjy.common.constant.Constants;
@@ -352,14 +353,14 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
      * @param params 参数值
      * @return 格式化后的文本
      */
-//    public static String format(String template, Object... params)
-//    {
-//        if (isEmpty(params) || isEmpty(template))
-//        {
-//            return template;
-//        }
-//        return StrFormatter.format(template, params);
-//    }
+    public static String format(String template, Object... params)
+    {
+        if (isEmpty(params) || isEmpty(template))
+        {
+            return template;
+        }
+        return StrFormatter.format(template, params);
+    }
 
     /**
      * 是否为http(s)://开头
