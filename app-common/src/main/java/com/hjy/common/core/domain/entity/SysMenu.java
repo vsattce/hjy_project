@@ -75,6 +75,7 @@ public class SysMenu extends TreeBaseEntity<SysMenu,Long> implements TreeEntity<
         return this.menuId;
     }
 
+
 //    @Override
 //    public void setChildren(List<SysMenu> children) {
 //        return ;
