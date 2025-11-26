@@ -78,7 +78,8 @@ module.exports = defineConfig({
         
         // 自动引入你的 hooks 目录下的函数
         dirs: [
-          './src/hooks'
+          './src/hooks',
+          './src/utils'
         ],
 
         // 既然你是 JS 项目，关掉 d.ts 生成

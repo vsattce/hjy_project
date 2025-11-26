@@ -87,6 +87,19 @@
     "watch": true,
     "watchEffect": true,
     "watchPostEffect": true,
-    "watchSyncEffect": true
+    "watchSyncEffect": true,
+    "filterAsyncRoutes": true,
+    "getRememberMe": true,
+    "getToken": true,
+    "getUsername": true,
+    "isAuthenticated": true,
+    "loadView": true,
+    "removeRememberMe": true,
+    "removeToken": true,
+    "removeUsername": true,
+    "request": true,
+    "setRememberMe": true,
+    "setToken": true,
+    "setUsername": true
   }
 }

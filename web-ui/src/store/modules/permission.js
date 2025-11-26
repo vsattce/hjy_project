@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { constantRoutes } from "@/router";
+import { constantRoutes,dynamicRoutes } from "@/router";
 import { filterAsyncRoutes } from "@/utils/router-gen";
 import { getRouters } from "@/api/menu";
 
@@ -21,7 +21,7 @@ export const usePermissionStore = defineStore("permission", {
             hidden: true,
           });
 
-          this.addRoutes = asyncRoutes;
+          this.addRoutes = dynamicRoutes.concat(asyncRoutes);
           this.routes = constantRoutes.concat(asyncRoutes);
           //
           resolve({addRoutes: this.addRoutes, routes: this.routes});

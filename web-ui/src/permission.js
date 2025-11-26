@@ -24,7 +24,6 @@ router.beforeEach(async (to, from, next) => {
           const { addRoutes } = await permissionStore.generateRoutes();
           // dynamically add accessible routes
           addRoutes.forEach((route) => {
-            // router.addRoute(route);
             // 核心修复：如果是 http/https 开头的链接，直接跳过，不要 addRoute
             if (!/^(https?:|mailto:|tel:)/.test(route.path)) {
               router.addRoute(route);

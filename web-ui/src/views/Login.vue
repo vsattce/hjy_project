@@ -140,10 +140,11 @@ const handleLogin = async () => {
     if (response.code === 200 && response.token) {
       setToken(response.token)
       
+      setRememberMe(loginForm.rememberMe)
       if (loginForm.rememberMe) {
-        localStorage.setItem('username', loginForm.username)
+        setUsername(loginForm.username)
       } else {
-        localStorage.removeItem('username')
+        removeUsername()
       }
       
       ElMessage.success('登录成功')
@@ -161,10 +162,10 @@ const handleLogin = async () => {
 }
 
 onMounted(() => {
-  const savedUsername = localStorage.getItem('username')
+  const savedUsername = getUsername()
   if (savedUsername) {
     loginForm.username = savedUsername
-    loginForm.rememberMe = true
+    loginForm.rememberMe = getRememberMe()
   }
 })
 </script>

@@ -3,7 +3,7 @@
  * 定义应用的所有路由规则
  */
 import { createRouter, createWebHistory } from 'vue-router'
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
 /* Layout */
 import Layout from '@/layout/index.vue'
 
@@ -33,10 +33,10 @@ export const constantRoutes = [
   {
     path: '',
     component: Layout,
-    redirect: 'dashboard',
+    redirect: '/dashboard',
     children: [
       {
-        path: 'dashboard',
+        path: '/dashboard',
         component: () => import('@/views/dashboard/index.vue'),
         name: 'Dashboard',
         meta: { title: '首页', icon: 'dashboard', affix: true }
@@ -75,24 +75,6 @@ export const dynamicRoutes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL), // 使用 HTML5 History 模式
   routes:constantRoutes
-})
-
-// 路由守卫：检查登录状态
-router.beforeEach((to, _from, next) => {
-  const token = getToken()
-  
-  // 如果访问登录页且已登录，跳转到首页
-  if (to.path === '/login' && token) {
-    next('/system/dashboard')
-  }
-  // 如果需要认证但未登录，跳转到登录页
-  else if (to.meta.requiresAuth && !token) {
-    next('/login')
-  }
-  // 其他情况正常访问
-  else {
-    next()
-  }
 })
 
 export default router
