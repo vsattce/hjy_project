@@ -9,14 +9,20 @@
         <div class="header-right">
           <el-dropdown>
             <span class="user-info">
-              <el-icon><User /></el-icon>
+              <el-icon>
+                <User />
+              </el-icon>
               <span>{{ username }}</span>
-              <el-icon><ArrowDown /></el-icon>
+              <el-icon>
+                <ArrowDown />
+              </el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="handleLogout">
-                  <el-icon><SwitchButton /></el-icon>
+                  <el-icon>
+                    <SwitchButton />
+                  </el-icon>
                   <span>退出登录</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -29,47 +35,13 @@
       <el-container class="main-container">
         <!-- 左侧菜单 -->
         <el-aside width="200px" class="sidebar">
-          <el-menu
-            :default-active="activeMenu"
-            class="menu"
-            router
-          >
-            <el-menu-item index="/system/dashboard">
-              <el-icon><HomeFilled /></el-icon>
-              <span>主页</span>
-            </el-menu-item>
-            <el-menu-item index="/system/user">
-              <el-icon><User /></el-icon>
-              <span>用户管理</span>
-            </el-menu-item>
-            <el-menu-item index="/system/role">
-              <el-icon><UserFilled /></el-icon>
-              <span>角色管理</span>
-            </el-menu-item>
-            <el-menu-item index="/system/dept">
-              <el-icon><OfficeBuilding /></el-icon>
-              <span>部门管理</span>
-            </el-menu-item>
-            <el-menu-item index="/system/post">
-              <el-icon><Briefcase /></el-icon>
-              <span>岗位管理</span>
-            </el-menu-item>
-            <el-menu-item index="/system/menu">
-              <el-icon><Menu /></el-icon>
-              <span>菜单管理</span>
-            </el-menu-item>
-            <el-menu-item index="/system/dict">
-              <el-icon><Collection /></el-icon>
-              <span>字典管理</span>
-            </el-menu-item>
-            <el-menu-item index="/system/config">
-              <el-icon><Setting /></el-icon>
-              <span>配置管理</span>
-            </el-menu-item>
-            <el-menu-item index="/system/log">
-              <el-icon><Document /></el-icon>
-              <span>日志管理</span>
-            </el-menu-item>
+          <el-menu :default-active="activeMenu" class="menu" router unique-opened background-color="#fff"
+            text-color="#303133" active-text-color="#409eff">
+            <sidebar-item v-for="route in permissionStore.routes" 
+              :key="route.path" 
+              :item="route"
+              :base-path="route.path">
+            </sidebar-item>
           </el-menu>
         </el-aside>
 
@@ -87,12 +59,17 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { logout } from '@/api/auth'
+// import Sidebar from './components/Sidebar/index.vue'
+import SidebarItem from './components/Sidebar/SidebarItem.vue';
+import {usePermissionStore} from '@/store/modules/permission';
 
 const router = useRouter()
 const route = useRoute()
 
-const username = ref(localStorage.getItem('username') || '管理员')
+const permissionStore = usePermissionStore()
 const activeMenu = computed(() => route.path)
+
+const username = ref(localStorage.getItem('username') || '管理员')
 
 const handleLogout = async () => {
   try {
@@ -101,7 +78,7 @@ const handleLogout = async () => {
       cancelButtonText: '取消',
       type: 'warning'
     })
-    
+
     try {
       await logout()
     } catch (error) {
@@ -123,7 +100,7 @@ const handleLogout = async () => {
   width: 100vw;
   overflow: hidden;
 
-  > .el-container {
+  >.el-container {
     height: 100%;
   }
 

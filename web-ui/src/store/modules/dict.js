@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getDictDataByType } from "@/api/dict";
+import { getDictDataByType } from "@/api/system/dict";
 
 export const useDictStore = defineStore('dict', () => {
   // 1. 缓存池： { 'sys_user_sex': [ {dictLabel: '男', dictValue: '0'}... ], ... }

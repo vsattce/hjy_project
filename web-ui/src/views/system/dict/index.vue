@@ -227,7 +227,7 @@ import {
   addDictData,
   updateDictData,
   deleteDictData
-} from '@/api/dict'
+} from '@/api/system/dict'
 
 // 字典类型相关
 const typeSearchForm = reactive({

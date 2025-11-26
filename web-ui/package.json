@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
+    "@vueuse/core": "^14.0.0",
     "axios": "^1.13.2",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.19",
     "element-plus": "^2.11.8",
+    "nprogress": "^0.2.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "^3.2.13",

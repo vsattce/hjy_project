@@ -123,7 +123,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getMenuTreeByRoot, addMenu, updateMenu, deleteMenu } from '@/api/menu'
+import { getMenuTreeByRoot, addMenu, updateMenu, deleteMenu } from '@/api/system/menu'
 
 const tableData = ref([])
 const allMenuTree = ref([]) // 所有菜单树，用于根节点选择

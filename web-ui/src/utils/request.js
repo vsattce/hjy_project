@@ -7,6 +7,7 @@
  */
 import axios from 'axios'
 import config from '@/config'
+import { getToken,removeToken } from '@/utils/auth'
 
 /**
  * 创建 axios 实例
@@ -28,7 +29,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 从 localStorage 获取 token 并添加到请求头
-    const token = localStorage.getItem('token')
+    const token = getToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -67,7 +68,7 @@ service.interceptors.response.use(
         case 401:
           console.error('未授权，请重新登录')
           // 清除 token 并跳转到登录页
-          localStorage.removeItem('token')
+          removeToken()
           window.location.href = '/login'
           break
         case 403:

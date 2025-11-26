@@ -101,7 +101,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getDeptTreeByRoot, addDept, updateDept, deleteDept } from '@/api/dept'
+import { getDeptTreeByRoot, addDept, updateDept, deleteDept } from '@/api/system/dept'
 
 const tableData = ref([])
 const allDeptTree = ref([]) // 所有部门树，用于根节点选择

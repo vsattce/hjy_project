@@ -16,7 +16,7 @@
               <span>高效便捷</span>
             </div>
             <div class="feature-item">
-              <el-icon :size="24"><CloudyIcon /></el-icon>
+              <el-icon :size="24"><MostlyCloudy /></el-icon>
               <span>云端同步</span>
             </div>
           </div>
@@ -108,11 +108,14 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter,useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { login } from '@/api/auth'
+import { setToken } from '@/utils/auth'
 
 const router = useRouter()
+const route = useRoute()
+// const path = route.query.redirect || '/'
 const loginFormRef = ref(null)
 
 const loginForm = reactive({
@@ -135,7 +138,7 @@ const handleLogin = async () => {
     const response = await login(loginForm)
     
     if (response.code === 200 && response.token) {
-      localStorage.setItem('token', response.token)
+      setToken(response.token)
       
       if (loginForm.rememberMe) {
         localStorage.setItem('username', loginForm.username)
@@ -144,7 +147,9 @@ const handleLogin = async () => {
       }
       
       ElMessage.success('登录成功')
-      router.push('/')
+      // console.log(route.query.redirect)
+      router.push({path: route.query.redirect || '/'});
+      // .push({ path: this.redirect || "/" }).catch(()=>{});
     } else {
       ElMessage.error(response.msg || '登录失败，请检查用户名和密码')
     }

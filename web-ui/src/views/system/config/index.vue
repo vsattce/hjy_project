@@ -138,7 +138,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getConfigPage, addConfig, updateConfig, deleteConfig } from '@/api/config'
+import { getConfigPage, addConfig, updateConfig, deleteConfig } from '@/api/system/config'
 // import { useDict } from '@/hooks/useDict'
 
 const searchForm = reactive({
