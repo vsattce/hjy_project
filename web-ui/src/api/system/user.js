@@ -4,6 +4,7 @@
  * 基础路径：/system/user
  */
 import request from '@/utils/request'
+import { parseStrEmpty } from '@/utils/hjy'
 
 /**
  * 获取用户列表（不分页）
@@ -49,7 +50,7 @@ export function getUserInfo(id) {
  */
 export function getUserInfoData(id) {
   return request({
-    url: `/system/user/info/${id}`,
+    url: `/system/user/info/${parseStrEmpty(id)}`,
     method: 'get'
   })
 }

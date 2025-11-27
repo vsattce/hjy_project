@@ -97,34 +97,86 @@
     </el-row>
 
     <!-- 新增/编辑对话框 -->
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px">
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="800px">
       <el-form :model="form" label-width="100px">
-        <el-form-item label="用户名称" required>
-          <el-input v-model="form.userName" placeholder="请输入用户名称" />
-        </el-form-item>
-        <el-form-item label="用户昵称" required>
-          <el-input v-model="form.nickName" placeholder="请输入用户昵称" />
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="form.phonenumber" placeholder="请输入手机号码" />
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email" placeholder="请输入邮箱" />
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-radio-group v-model="form.sex">
-            <el-radio v-for="dict in sys_user_sex" :key="dict.dictValue" :label="dict.dictValue">
-              {{ dict.dictLabel }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio v-for="dict in sys_normal_disable" :key="dict.dictValue" :label="dict.dictValue">
-              {{ dict.dictLabel }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="用户昵称" required>
+              <el-input v-model="form.nickName" placeholder="请输入用户昵称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="归属部门">
+              <el-tree-select v-model="form.deptId" :data="deptTree" :props="{ children: 'children', label: 'deptName', value: 'deptId' }" 
+                check-strictly placeholder="请选择归属部门" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="手机号码">
+              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="邮箱">
+              <el-input v-model="form.email" placeholder="请输入邮箱" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="用户名称" required>
+              <el-input v-model="form.userName" placeholder="请输入用户名称" :disabled="!!form.userId" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="用户密码" :required="!form.userId">
+              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" show-password :disabled="!!form.userId" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="用户性别">
+              <el-select v-model="form.sex" placeholder="请选择性别" style="width: 100%;">
+                <el-option v-for="dict in sys_user_sex" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.status">
+                <el-radio v-for="dict in sys_normal_disable" :key="dict.dictValue" :label="dict.dictValue">
+                  {{ dict.dictLabel }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="岗位">
+              <el-select v-model="form.postIds" placeholder="请选择岗位" multiple style="width: 100%;">
+                <el-option v-for="post in postList" :key="post.postId" :label="post.postName" :value="post.postId" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色">
+              <el-select v-model="form.roleIds" placeholder="请选择角色" multiple style="width: 100%;">
+                <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleId" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="备注">
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" :rows="3" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -141,7 +193,6 @@ import { getUserPage, addUser, updateUser, deleteUser, getUserInfoData } from '@
 import { getDeptTreeByRoot } from '@/api/system/dept'
 
 const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
-// const {} = useDict('')
 
 const searchForm = reactive({
   userName: null,
@@ -155,6 +206,8 @@ const searchForm = reactive({
 const createTimeRange = ref([])
 
 const deptTree = ref([])
+const postList = ref([])
+const roleList = ref([])
 
 const tableData = ref([])
 const dialogVisible = ref(false)
@@ -164,10 +217,15 @@ const form = reactive({
   userId: null,
   userName: '',
   nickName: '',
+  deptId: null,
   phonenumber: '',
   email: '',
+  password: '',
   sex: '0',
-  status: '0'
+  status: '0',
+  postIds: [],
+  roleIds: [],
+  remark: ''
 })
 
 const pagination = reactive({
@@ -233,8 +291,24 @@ const loadDeptTree = async () => {
 const handleAdd = () => {
   dialogTitle.value = '新增用户'
   getUserInfoData().then(res => {
-    console.log(res)
-    Object.assign(form, { userId: null, userName: '', nickName: '', phonenumber: '', email: '', sex: '0', status: '0' })
+    if (res.code === 200) {
+      postList.value = res.posts || []
+      roleList.value = res.roles || []
+      Object.assign(form, { 
+        userId: null, 
+        userName: '', 
+        nickName: '', 
+        deptId: null,
+        phonenumber: '', 
+        email: '', 
+        password: '',
+        sex: '0', 
+        status: '0',
+        postIds: [],
+        roleIds: [],
+        remark: ''
+      })
+    }
   })
   dialogVisible.value = true
 }
@@ -242,8 +316,29 @@ const handleAdd = () => {
 const handleEdit = (row) => {
   dialogTitle.value = '编辑用户'
   getUserInfoData(row.userId).then(res => {
-    console.log(res)
-    Object.assign(form, row)
+    if (res.code === 200) {
+      postList.value = res.posts || []
+      roleList.value = res.roles || []
+      
+      // 提取已选中的岗位和角色ID
+      const selectedPostIds = res.postIds?.map(post => post.postId) || []
+      const selectedRoleIds = res.roleIds || []
+      
+      Object.assign(form, {
+        userId: res.data.userId,
+        userName: res.data.userName,
+        nickName: res.data.nickName,
+        deptId: res.data.deptId,
+        phonenumber: res.data.phonenumber,
+        email: res.data.email,
+        password: '',
+        sex: res.data.sex,
+        status: res.data.status,
+        postIds: selectedPostIds,
+        roleIds: selectedRoleIds,
+        remark: res.data.remark || ''
+      })
+    }
   })
   dialogVisible.value = true
 }

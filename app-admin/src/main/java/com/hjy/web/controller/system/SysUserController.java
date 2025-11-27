@@ -34,8 +34,9 @@ public class SysUserController extends BaseController<SysUserServiceImpl, SysUse
     @Autowired
     private ISysPostService sysPostService;
 
-    @RequestMapping("/info/{id}")
-    public AjaxResult getUserInfoById(@PathVariable(value = "id",required = true) Long id)
+//    为了参数传空的时候不报错误
+    @RequestMapping(value={"/info/","/info/{id}"})
+    public AjaxResult getUserInfoById(@PathVariable(value = "id",required = false) Long id)
     {
         AjaxResult ajaxResult = AjaxResult.success();
         if (StringUtils.isNotNull(id)){
