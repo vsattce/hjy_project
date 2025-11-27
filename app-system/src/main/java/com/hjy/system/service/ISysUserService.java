@@ -12,4 +12,6 @@ public interface ISysUserService extends IBaseService<SysUser> {
      * @return 用户对象信息
      */
     public SysUser selectUserByUserName(String userName);
+
+    public SysUser getUserInfoById(Long id);
 }

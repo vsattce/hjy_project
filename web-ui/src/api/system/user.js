@@ -42,6 +42,17 @@ export function getUserInfo(id) {
     method: 'get'
   })
 }
+/**
+ * 根据 ID 获取用户详情
+ * @param {Number} id - 用户ID
+ * @returns {Promise} 返回用户详细信息
+ */
+export function getUserInfoData(id) {
+  return request({
+    url: `/system/user/info/${id}`,
+    method: 'get'
+  })
+}
 
 /**
  * 新增用户
@@ -78,19 +89,5 @@ export function deleteUser(ids) {
   return request({
     url: `/system/user/${ids}`,
     method: 'delete'
-  })
-}
-
-/**
- * 重置用户密码
- * @param {Number} userId - 用户ID
- * @param {String} password - 新密码
- * @returns {Promise}
- */
-export function resetUserPwd(userId, password) {
-  return request({
-    url: '/system/user/resetPwd',
-    method: 'put',
-    data: { userId, password }
   })
 }

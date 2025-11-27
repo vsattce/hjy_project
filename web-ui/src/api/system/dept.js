@@ -19,30 +19,6 @@ export function getDeptList(params) {
 }
 
 /**
- * 获取部门树形结构（如果后端有实现）
- * @returns {Promise} 返回部门树
- */
-export function getDeptTree() {
-  return request({
-    url: '/system/dept/tree',
-    method: 'get'
-  })
-}
-
-/**
- * 根据父ID获取部门树形结构
- * @param {Number} parentId - 父部门ID，默认0表示根节点
- * @returns {Promise} 返回部门树
- */
-export function getDeptTreeByParentId(parentId = 0) {
-  return request({
-    url: '/system/dept/list4treeByParentId',
-    method: 'get',
-    params: { parentId }
-  })
-}
-
-/**
  * 根据根节点ID获取部门树形结构
  * @param {Number} rootId - 根节点ID
  * @returns {Promise} 返回部门树

@@ -19,45 +19,6 @@ export function getMenuList(params) {
 }
 
 /**
- * 分页查询菜单列表
- * @param {Object} params - 分页参数 { current: 页码, size: 每页数量 }
- * @returns {Promise} 返回分页数据
- */
-export function getMenuPage(params) {
-  return request({
-    url: '/system/menu/page',
-    method: 'get',
-    params
-  })
-}
-
-/**
- * 根据父ID获取菜单树形结构
- * @param {Number} parentId - 父菜单ID，默认0表示根节点
- * @returns {Promise} 返回菜单树
- */
-export function getMenuTreeByParentId(parentId = 0) {
-  return request({
-    url: '/system/menu/list4treeByParentId',
-    method: 'get',
-    params: { parentId }
-  })
-}
-
-/**
- * 根据ID获取菜单树形结构
- * @param {Number} id - 菜单ID
- * @returns {Promise} 返回菜单树
- */
-export function getMenuTreeById(id) {
-  return request({
-    url: '/system/menu/list4treeById',
-    method: 'get',
-    params: { id }
-  })
-}
-
-/**
  * 根据根节点ID获取菜单树形结构
  * @param {Number} rootId - 根节点ID
  * @returns {Promise} 返回菜单树

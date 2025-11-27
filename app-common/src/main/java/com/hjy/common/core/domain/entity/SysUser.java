@@ -68,4 +68,10 @@ public class SysUser extends BaseEntity
     /** 角色对象 */
     @TableField(exist = false)
     private List<SysRole> roles;
+
+
+    public static boolean isAdmin(Long userId)
+    {
+        return userId != null && 1L == userId;
+    }
 }
