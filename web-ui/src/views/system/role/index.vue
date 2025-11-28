@@ -40,11 +40,14 @@
         <el-table-column prop="roleName" label="角色名称" min-width="150" />
         <el-table-column prop="roleKey" label="权限字符" min-width="150" />
         <el-table-column prop="roleSort" label="显示顺序" width="100" />
-        <el-table-column prop="status" label="状态" width="80">
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.status === '0' ? 'success' : 'danger'">
-              {{ row.status === '0' ? '正常' : '停用' }}
-            </el-tag>
+            <el-switch
+              v-model="row.status"
+              active-value="0"
+              inactive-value="1"
+              @change="handleStatusChange(row)"
+            />
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" />
@@ -182,6 +185,17 @@ const handleSubmit = async () => {
     loadData()
   } catch (error) {
     ElMessage.error('操作失败: ' + (error.message || '未知错误'))
+  }
+}
+
+const handleStatusChange = async (row) => {
+  try {
+    await updateRole({ roleId: row.roleId, status: row.status })
+    ElMessage.success('状态修改成功')
+    loadData()
+  } catch (error) {
+    ElMessage.error('状态修改失败: ' + (error.message || '未知错误'))
+    loadData()
   }
 }
 
