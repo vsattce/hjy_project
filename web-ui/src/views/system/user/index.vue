@@ -67,6 +67,11 @@
             <el-table-column prop="userId" label="用户ID" width="80" />
             <el-table-column prop="userName" label="用户名称" min-width="120" />
             <el-table-column prop="nickName" label="用户昵称" min-width="120" />
+            <el-table-column prop="deptId" label="部门" min-width="120">
+              <template #default="{ row }">
+                {{ getDeptName(row.deptId) }}
+              </template>
+            </el-table-column>
             <el-table-column prop="phonenumber" label="手机号码" width="120" />
             <el-table-column prop="sex" label="性别" width="120">
               <template #default="{ row }">
@@ -127,12 +132,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="用户名称" required>
-              <el-input v-model="form.userName" placeholder="请输入用户名称" :disabled="!!form.userId" />
+              <el-input v-model="form.userName" placeholder="请输入用户名称" :disabled="!!form.userId" autocomplete="off"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="用户密码" :required="!form.userId">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" show-password :disabled="!!form.userId" />
+              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" show-password :disabled="!!form.userId" autocomplete="new-password"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -190,7 +195,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUserPage, addUser, updateUser, deleteUser, getUserInfo } from '@/api/system/user'
-import { getDeptTreeByRoot } from '@/api/system/dept'
+import { getDeptTreeByRoot, getDeptList } from '@/api/system/dept'
 
 const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
 
@@ -206,6 +211,7 @@ const searchForm = reactive({
 const createTimeRange = ref([])
 
 const deptTree = ref([])
+const deptList = ref([])
 const postList = ref([])
 const roleList = ref([])
 
@@ -286,6 +292,22 @@ const loadDeptTree = async () => {
   } catch (error) {
     ElMessage.error('加载部门数据失败: ' + (error.message || '未知错误'))
   }
+}
+
+const loadDeptList = async () => {
+  try {
+    const response = await getDeptList()
+    if (response.code === 200 && response.data) {
+      deptList.value = response.data
+    }
+  } catch (error) {
+    ElMessage.error('加载部门列表失败: ' + (error.message || '未知错误'))
+  }
+}
+
+const getDeptName = (deptId) => {
+  const dept = deptList.value.find(d => d.deptId === deptId)
+  return dept ? dept.deptName : '-'
 }
 
 const handleAdd = () => {
@@ -397,6 +419,7 @@ const handleStatusChange = async (row) => {
 
 onMounted(() => {
   loadDeptTree()
+  loadDeptList()
   loadData()
 })
 </script>

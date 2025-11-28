@@ -4,6 +4,9 @@ import com.hjy.common.core.domain.entity.SysUser;
 import com.hjy.common.core.service.IBaseService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
+
 public interface ISysUserService extends IBaseService<SysUser> {
 
     /**
@@ -18,4 +21,11 @@ public interface ISysUserService extends IBaseService<SysUser> {
 
     @Transactional(rollbackFor = Exception.class)
     public int insertUserWithRelations(SysUser entity);
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateUserWithRelations(SysUser entity);
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteUsersWithRelationsByIds(List<Long> ids);
 }

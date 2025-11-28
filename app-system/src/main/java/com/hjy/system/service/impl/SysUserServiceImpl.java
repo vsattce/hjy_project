@@ -92,28 +92,84 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         }
 
         // 2. 存角色关联
-        List<SysUserRole> sysUserRoles = new ArrayList<>();
-        if (entity.getRoleIds() != null) {
-            for (Long roleId : entity.getRoleIds()) {
-                sysUserRoles.add(new SysUserRole(entity.getUserId(), roleId));
-            }
-            if (!sysUserRoles.isEmpty()) {
-                sysUserRoleService.saveBatch(sysUserRoles);
-            }
-        }
+        sysUserRoleService.insertUserRoleByUser( entity);
+//        List<SysUserRole> sysUserRoles = new ArrayList<>();
+//        if (entity.getRoleIds() != null) {
+//            for (Long roleId : entity.getRoleIds()) {
+//                sysUserRoles.add(new SysUserRole(entity.getUserId(), roleId));
+//            }
+//            if (!sysUserRoles.isEmpty()) {
+//                sysUserRoleService.saveBatch(sysUserRoles);
+//            }
+//        }
 
         // 3. 存岗位关联（如果这里报错，第1步和第2步存入的数据会全部撤销，就像没发生过一样）
-        List<SysUserPost> sysUserPosts = new ArrayList<>();
-        if (entity.getPostIds() != null) {
-            for (Long postId : entity.getPostIds()) {
-                sysUserPosts.add(new SysUserPost(entity.getUserId(), postId));
-            }
-            if (!sysUserPosts.isEmpty()) {
-                sysUserPostService.saveBatch(sysUserPosts);
-            }
-        }
+        sysUserPostService.insertUserPostByUser( entity);
+//        List<SysUserPost> sysUserPosts = new ArrayList<>();
+//        if (entity.getPostIds() != null) {
+//            for (Long postId : entity.getPostIds()) {
+//                sysUserPosts.add(new SysUserPost(entity.getUserId(), postId));
+//            }
+//            if (!sysUserPosts.isEmpty()) {
+//                sysUserPostService.saveBatch(sysUserPosts);
+//            }
+//        }
 
 
         return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateUserWithRelations(SysUser entity) {
+//        return false;
+        boolean saveUserResult =this.updateById(entity);
+        if (!saveUserResult) {
+            throw new RuntimeException("用户更新失败，直接抛异常回滚");
+        }
+        sysUserRoleService.remove(new QueryWrapper<SysUserRole>().eq("user_id", entity.getUserId()));
+        // 2. 存角色关联
+        sysUserRoleService.insertUserRoleByUser( entity);
+//        List<SysUserRole> sysUserRoles = new ArrayList<>();
+//        if (entity.getRoleIds() != null) {
+//            for (Long roleId : entity.getRoleIds()) {
+//                sysUserRoles.add(new SysUserRole(entity.getUserId(), roleId));
+//            }
+//            if (!sysUserRoles.isEmpty()) {
+//                sysUserRoleService.saveBatch(sysUserRoles);
+//            }
+//        }
+        sysUserPostService.remove(new QueryWrapper<SysUserPost>().eq("user_id", entity.getUserId()));
+
+        sysUserPostService.insertUserPostByUser( entity);
+        // 3. 存岗位关联（如果这里报错，第1步和第2步存入的数据会全部撤销，就像没发生过一样）
+//        List<SysUserPost> sysUserPosts = new ArrayList<>();
+//        if (entity.getPostIds() != null) {
+//            for (Long postId : entity.getPostIds()) {
+//                sysUserPosts.add(new SysUserPost(entity.getUserId(), postId));
+//            }
+//            if (!sysUserPosts.isEmpty()) {
+//                sysUserPostService.saveBatch(sysUserPosts);
+//            }
+//        }
+//
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteUsersWithRelationsByIds(List<Long> ids) {
+
+        boolean deleteUserResult = this.removeByIds(ids);
+
+        if (!deleteUserResult) {
+            throw new RuntimeException("用户删除失败，直接抛异常回滚");
+        }
+
+        sysUserRoleService.remove(new QueryWrapper<SysUserRole>().in("user_id", ids));
+
+        sysUserPostService.remove(new QueryWrapper<SysUserPost>().in("user_id", ids));
+
+        return true;
     }
 }

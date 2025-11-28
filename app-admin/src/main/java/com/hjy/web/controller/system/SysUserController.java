@@ -8,6 +8,13 @@ import com.hjy.system.domain.SysPost;
 import com.hjy.system.domain.SysUserPost;
 import com.hjy.system.domain.SysUserRole;
 import com.hjy.system.service.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +25,7 @@ import com.hjy.system.service.impl.SysUserServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +34,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/system/user")
 public class SysUserController extends BaseController<SysUserServiceImpl, SysUser>
 {
+    private static final int MAX_BATCH_SIZE = 10;
     @Autowired
     private ISysUserService sysUserService;
 
@@ -60,6 +69,7 @@ public class SysUserController extends BaseController<SysUserServiceImpl, SysUse
         return ajaxResult;
     }
 
+    @Override
     @PostMapping
     public AjaxResult save(@RequestBody SysUser entity) {
         logger.info("新增数据: {}", entity);
@@ -68,5 +78,32 @@ public class SysUserController extends BaseController<SysUserServiceImpl, SysUse
         int result = sysUserService.insertUserWithRelations(entity);
 
         return toAjax(result==1);
+    }
+
+    @Override
+    @PutMapping
+    public AjaxResult updateById(@RequestBody SysUser entity) {
+        logger.info("修改数据: {}", entity);
+        boolean result = sysUserService.updateUserWithRelations(entity);
+        return toAjax(result);
+    }
+
+    /**
+     * 批量删除通用对象
+     *
+     * @param ids 待删除的ID数组
+     * @return 操作结果
+     */
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
+        if (ids == null || ids.length == 0) {
+            return error("请选择要删除的数据");
+        }
+        if (ids.length > MAX_BATCH_SIZE) {
+            return error("批量删除数量不能超过" + MAX_BATCH_SIZE + "条");
+        }
+        logger.info("批量删除数据，ID数量: {}", ids.length);
+        boolean result = sysUserService.deleteUsersWithRelationsByIds(Arrays.asList(ids));
+        return toAjax(result);
     }
 }
