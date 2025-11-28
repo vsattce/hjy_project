@@ -70,6 +70,15 @@ public class SysUser extends BaseEntity
     private List<SysRole> roles;
 
 
+    /** 角色组 */
+    @TableField(exist = false)
+    private Long[] roleIds;
+
+    /** 岗位组 */
+    @TableField(exist = false)
+    private Long[] postIds;
+
+
     public static boolean isAdmin(Long userId)
     {
         return userId != null && 1L == userId;

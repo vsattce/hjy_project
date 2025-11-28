@@ -189,7 +189,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getUserPage, addUser, updateUser, deleteUser, getUserInfoData } from '@/api/system/user'
+import { getUserPage, addUser, updateUser, deleteUser, getUserInfo } from '@/api/system/user'
 import { getDeptTreeByRoot } from '@/api/system/dept'
 
 const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
@@ -290,7 +290,7 @@ const loadDeptTree = async () => {
 
 const handleAdd = () => {
   dialogTitle.value = '新增用户'
-  getUserInfoData().then(res => {
+  getUserInfo().then(res => {
     if (res.code === 200) {
       postList.value = res.posts || []
       roleList.value = res.roles || []
@@ -315,13 +315,13 @@ const handleAdd = () => {
 
 const handleEdit = (row) => {
   dialogTitle.value = '编辑用户'
-  getUserInfoData(row.userId).then(res => {
+  getUserInfo(row.userId).then(res => {
     if (res.code === 200) {
       postList.value = res.posts || []
       roleList.value = res.roles || []
       
       // 提取已选中的岗位和角色ID
-      const selectedPostIds = res.postIds?.map(post => post.postId) || []
+      const selectedPostIds = res.postIds || []
       const selectedRoleIds = res.roleIds || []
       
       Object.assign(form, {

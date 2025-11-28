@@ -16,7 +16,7 @@ import { getToken,removeToken } from '@/utils/auth'
  */
 const service = axios.create({
   baseURL: config.apiBaseUrl,
-  timeout: 15000,
+  timeout: 15000000,
   headers: {
     'Content-Type': 'application/json'
   }

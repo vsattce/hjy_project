@@ -6,14 +6,18 @@ import com.hjy.common.core.domain.entity.SysRole;
 import com.hjy.common.core.domain.entity.SysUser;
 import com.hjy.common.core.service.impl.BaseServiceImpl;
 import com.hjy.common.utils.QueryWrapperUtils;
+import com.hjy.system.domain.SysUserPost;
 import com.hjy.system.domain.SysUserRole;
 import com.hjy.system.mapper.SysUserMapper;
 import com.hjy.system.service.ISysRoleService;
+import com.hjy.system.service.ISysUserPostService;
 import com.hjy.system.service.ISysUserRoleService;
 import com.hjy.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,7 +30,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     @Autowired
     private ISysUserRoleService sysUserRoleService;
     @Autowired
-    private ISysRoleService sysRoleService;
+    private ISysRoleService sysRoleService;//@Autowired
+
+//    private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private ISysUserPostService sysUserPostService;
 
     @Override
     public SysUser selectUserByUserName(String userName) {
@@ -63,9 +71,49 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
 
         List<SysUserRole> sysUserRoles = sysUserRoleService.list(new SysUserRole(id, null));
         QueryWrapper<SysRole> queryWrapper = new QueryWrapper<SysRole>();
-        queryWrapper.in("role_id", sysUserRoles.stream().map(SysUserRole::getRoleId).collect(Collectors.toList()));
-        List<SysRole> roles = sysRoleService.list(queryWrapper);
+        List<SysRole> roles = new ArrayList<>();
+        if (sysUserRoles != null && !sysUserRoles.isEmpty()) {
+            queryWrapper.in("role_id", sysUserRoles.stream().map(SysUserRole::getRoleId).collect(Collectors.toList()));
+            roles = sysRoleService.list(queryWrapper);
+        }
         sysUser.setRoles( roles);
         return sysUser;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public int insertUserWithRelations(SysUser entity) {
+
+
+        boolean saveUserResult =this.save(entity);
+
+        if (!saveUserResult) {
+            throw new RuntimeException("用户保存失败，直接抛异常回滚");
+        }
+
+        // 2. 存角色关联
+        List<SysUserRole> sysUserRoles = new ArrayList<>();
+        if (entity.getRoleIds() != null) {
+            for (Long roleId : entity.getRoleIds()) {
+                sysUserRoles.add(new SysUserRole(entity.getUserId(), roleId));
+            }
+            if (!sysUserRoles.isEmpty()) {
+                sysUserRoleService.saveBatch(sysUserRoles);
+            }
+        }
+
+        // 3. 存岗位关联（如果这里报错，第1步和第2步存入的数据会全部撤销，就像没发生过一样）
+        List<SysUserPost> sysUserPosts = new ArrayList<>();
+        if (entity.getPostIds() != null) {
+            for (Long postId : entity.getPostIds()) {
+                sysUserPosts.add(new SysUserPost(entity.getUserId(), postId));
+            }
+            if (!sysUserPosts.isEmpty()) {
+                sysUserPostService.saveBatch(sysUserPosts);
+            }
+        }
+
+
+        return 1;
     }
 }

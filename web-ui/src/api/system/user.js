@@ -37,20 +37,20 @@ export function getUserPage(params) {
  * @param {Number} id - 用户ID
  * @returns {Promise} 返回用户详细信息
  */
-export function getUserInfo(id) {
-  return request({
-    url: `/system/user/${id}`,
-    method: 'get'
-  })
-}
+// export function getUserInfo(id) {
+//   return request({
+//     url: `/system/user/${id}`,
+//     method: 'get'
+//   })
+// }
 /**
  * 根据 ID 获取用户详情
  * @param {Number} id - 用户ID
  * @returns {Promise} 返回用户详细信息
  */
-export function getUserInfoData(id) {
+export function getUserInfo(id) {
   return request({
-    url: `/system/user/info/${parseStrEmpty(id)}`,
+    url: `/system/user/${parseStrEmpty(id)}`,
     method: 'get'
   })
 }

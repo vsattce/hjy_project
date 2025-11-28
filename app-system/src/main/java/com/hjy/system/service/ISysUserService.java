@@ -2,6 +2,7 @@ package com.hjy.system.service;
 
 import com.hjy.common.core.domain.entity.SysUser;
 import com.hjy.common.core.service.IBaseService;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ISysUserService extends IBaseService<SysUser> {
 
@@ -14,4 +15,7 @@ public interface ISysUserService extends IBaseService<SysUser> {
     public SysUser selectUserByUserName(String userName);
 
     public SysUser getUserInfoById(Long id);
+
+    @Transactional(rollbackFor = Exception.class)
+    public int insertUserWithRelations(SysUser entity);
 }
