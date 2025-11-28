@@ -94,7 +94,7 @@
 
           <div class="pagination-wrapper">
             <el-pagination v-model:current-page="pagination.page" v-model:page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]" :total="pagination.total" layout="total, sizes, prev, pager, next, jumper"
+              :page-sizes="PAGE_SIZES" :total="pagination.total" :layout="PAGINATION_LAYOUT"
               @size-change="loadData" @current-change="loadData" />
           </div>
         </el-card>
@@ -196,6 +196,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUserPage, addUser, updateUser, deleteUser, getUserInfo } from '@/api/system/user'
 import { getDeptTreeByRoot, getDeptList } from '@/api/system/dept'
+import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
 
 const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
 

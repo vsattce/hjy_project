@@ -57,7 +57,7 @@
             <el-pagination
               v-model:current-page="typePagination.page"
               v-model:page-size="typePagination.pageSize"
-              :page-sizes="[10, 20, 50]"
+              :page-sizes="PAGE_SIZES"
               :total="typePagination.total"
               layout="total, prev, pager, next"
               small
@@ -136,9 +136,9 @@
             <el-pagination
               v-model:current-page="dataPagination.page"
               v-model:page-size="dataPagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]"
+              :page-sizes="PAGE_SIZES"
               :total="dataPagination.total"
-              layout="total, sizes, prev, pager, next, jumper"
+              :layout="PAGINATION_LAYOUT"
               @size-change="loadDataData"
               @current-change="loadDataData"
             />
@@ -228,6 +228,7 @@ import {
   updateDictData,
   deleteDictData
 } from '@/api/system/dict'
+import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
 
 // 字典类型相关
 const typeSearchForm = reactive({

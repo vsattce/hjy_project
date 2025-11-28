@@ -53,9 +53,9 @@
         <el-pagination
           v-model:current-page="pagination.page"
           v-model:page-size="pagination.pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="PAGE_SIZES"
           :total="pagination.total"
-          layout="total, sizes, prev, pager, next, jumper"
+          :layout="PAGINATION_LAYOUT"
           @size-change="loadData"
           @current-change="loadData"
         />
@@ -96,6 +96,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getPostPage, addPost, updatePost, deletePost } from '@/api/system/post'
+import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
 
 const searchForm = reactive({
   postName: '',

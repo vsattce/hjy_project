@@ -79,9 +79,9 @@
         <el-pagination
           v-model:current-page="paginationReactive.page"
           v-model:page-size="paginationReactive.pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="PAGE_SIZES"
           :total="paginationReactive.itemCount"
-          layout="total, sizes, prev, pager, next, jumper"
+          :layout="PAGINATION_LAYOUT"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -139,6 +139,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getConfigPage, addConfig, updateConfig, deleteConfig } from '@/api/system/config'
+import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
 // import { useDict } from '@/hooks/useDict'
 
 const searchForm = reactive({
