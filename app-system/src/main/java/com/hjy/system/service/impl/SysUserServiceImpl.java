@@ -53,9 +53,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         }
         QueryWrapper<SysUser> queryWrapper = QueryWrapperUtils.entity2Wrapper(entity,parameters);
         if (deptId != null&& deptId != 0){
-            // (可选) 讲究人的做法：把值塞回去，万一后面 entity 还要用
-//            entity.setDeptId(deptId);
-//            parameters.put("deptId",deptId);
 
             queryWrapper.and(wrapper ->
                     wrapper.eq("dept_id",deptId)

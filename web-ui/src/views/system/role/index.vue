@@ -104,7 +104,6 @@
               :check-strictly="!checkStrictly"
               node-key="menuId"
               show-checkbox
-              default-expand-all
             />
           </div>
         </el-form-item>
@@ -121,11 +120,12 @@
 </template>
 
 <script setup>
-import { getMenuTreeByRoot} from '@/api/system/menu'
+import { getMenuTreeByRoot } from '@/api/system/menu'
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getRolePage, addRole, updateRole, deleteRole } from '@/api/system/role'
+import { getRolePage, addRole, updateRole, deleteRole, getRoleInfo } from '@/api/system/role'
 import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
+// import useDict from '@/hooks/useDict'
 
 const { sys_normal_disable } = useDict('sys_normal_disable')
 
@@ -140,7 +140,7 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('新增角色')
 const menuTreeData = ref([])
 const menuTreeRef = ref(null)
-const expandAll = ref(true)
+const expandAll = ref(false)
 const checkAll = ref(false)
 const checkStrictly = ref(true)
 
@@ -239,25 +239,32 @@ const handleAdd = () => {
   }, 100)
 }
 
-const handleEdit = (row) => {
+const handleEdit = async (row) => {
   dialogTitle.value = '编辑角色'
-  Object.assign(form, row)
-  loadMenuTree()
-  dialogVisible.value = true
-  setTimeout(() => {
-    if (menuTreeRef.value && row.menuIds) {
-      menuTreeRef.value.setCheckedKeys(row.menuIds)
+  try {
+    // 从后端获取完整的角色信息（包含 menuIds）
+    const response = await getRoleInfo(row.roleId)
+    if (response.code === 200 && response.data) {
+      Object.assign(form, response.data)
+      loadMenuTree()
+      dialogVisible.value = true
+      setTimeout(() => {
+        if (menuTreeRef.value && response.data.menuIds) {
+          menuTreeRef.value.setCheckedKeys(response.data.menuIds)
+        }
+      }, 100)
     }
-  }, 100)
+  } catch (error) {
+    ElMessage.error('获取角色信息失败: ' + (error.message || '未知错误'))
+  }
 }
 
 const handleSubmit = async () => {
   try {
-    // 获取选中的菜单ID
+    // 获取选中的菜单ID（只获取完全选中的节点，不包括半选中的父节点）
     if (menuTreeRef.value) {
       const checkedKeys = menuTreeRef.value.getCheckedKeys()
-      const halfCheckedKeys = menuTreeRef.value.getHalfCheckedKeys()
-      form.menuIds = [...checkedKeys, ...halfCheckedKeys]
+      form.menuIds = checkedKeys
     }
     
     if (form.roleId) {
