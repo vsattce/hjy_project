@@ -37,17 +37,6 @@ export function getUserPage(params) {
  * @param {Number} id - 用户ID
  * @returns {Promise} 返回用户详细信息
  */
-// export function getUserInfo(id) {
-//   return request({
-//     url: `/system/user/${id}`,
-//     method: 'get'
-//   })
-// }
-/**
- * 根据 ID 获取用户详情
- * @param {Number} id - 用户ID
- * @returns {Promise} 返回用户详细信息
- */
 export function getUserInfo(id) {
   return request({
     url: `/system/user/${parseStrEmpty(id)}`,
@@ -99,5 +88,23 @@ export function resetUserPwd(data) {
     url: '/system/user/resetPwd',
     method: 'put',
     data
+  })
+}
+
+
+export function updateAuthRole(userId,roleIds) {
+  return request({
+    url: '/system/user/authRole',
+    method: 'put',
+    params:{
+      userId,roleIds
+    }
+  })
+}
+
+export function getUserAuthRole(userId) {
+  return request({
+    url: `/system/user/authRole/${userId}`,
+    method: 'get'
   })
 }

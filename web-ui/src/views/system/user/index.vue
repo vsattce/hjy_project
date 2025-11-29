@@ -96,6 +96,7 @@
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item command="resetPassword">重置密码</el-dropdown-item>
+                      <el-dropdown-item command="handleAuthRole"  >分配角色</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
@@ -224,6 +225,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUserPage, addUser, updateUser, deleteUser, getUserInfo, resetUserPwd } from '@/api/system/user'
 import { getDeptTreeByRoot, getDeptList } from '@/api/system/dept'
 import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
+import router from '@/router'
 
 const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
 
@@ -454,7 +456,16 @@ const handleStatusChange = async (row) => {
 const handleCommand = (command, row) => {
   if (command === 'resetPassword') {
     handleResetPassword(row)
+  }else if(command === 'handleAuthRole'){
+    // 分配角色
+    handleAuthRole(row);
   }
+}
+
+const handleAuthRole = (row) => {
+  const userId = row.userId;
+  // this.$router.push("/system/user-auth/role/" + userId);
+  router.push({ path: `/system/user-auth/role/${userId}` });
 }
 
 const handleResetPassword = (row) => {

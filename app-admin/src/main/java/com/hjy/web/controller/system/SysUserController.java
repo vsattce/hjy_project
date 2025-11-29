@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.hjy.common.core.controller.BaseController;
@@ -112,5 +113,30 @@ public class SysUserController extends BaseController<SysUserServiceImpl, SysUse
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         user.setUpdateBy(getUsername());
         return toAjax(sysUserService.resetPwd(user));
+    }
+//
+    /**
+     * 根据用户编号获取授权角色
+     */
+    @GetMapping("/authRole/{userId}")
+    public AjaxResult authRole(@PathVariable("userId") Long id)
+    {
+        AjaxResult ajaxResult = AjaxResult.success();
+//        if (StringUtils.isNotNull(userId)){
+        SysUser sysUser = sysUserService.getUserInfoById(id);
+        ajaxResult.put("user", sysUser);
+        ajaxResult.put("roleIds", sysUser.getRoles().stream().map(SysRole::getRoleId).collect(Collectors.toList()));
+
+        return ajaxResult;
+    }
+
+    /**
+     * 用户授权角色
+     */
+    @PutMapping("/authRole")
+    public AjaxResult insertAuthRole(Long userId, Long[] roleIds)
+    {
+        sysUserService.insertUserAuth(userId, roleIds);
+        return success();
     }
 }

@@ -31,4 +31,7 @@ public interface ISysUserService extends IBaseService<SysUser> {
 
 
     public boolean resetPwd(SysUser user);
+
+    @Transactional(rollbackFor = Exception.class)
+    public void insertUserAuth(Long userId, Long[] roleIds);
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -136,5 +137,14 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     @Override
     public boolean resetPwd(SysUser user) {
         return sysUserMapper.updateById(user)>0;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void insertUserAuth(Long userId, Long[] roleIds) {
+        sysUserRoleService.remove(new QueryWrapper<SysUserRole>().eq("user_id", userId));
+//
+        List<SysUserRole> sysUserRoles = Arrays.stream(roleIds).map(roleId->new SysUserRole(userId,roleId)).toList();
+        sysUserRoleService.saveBatch(sysUserRoles);
     }
 }

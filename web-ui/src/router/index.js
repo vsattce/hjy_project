@@ -46,6 +46,19 @@ export const constantRoutes = [
 ]
 // 路由配置数组
 export const dynamicRoutes = [
+    {
+      path: '/system/user-auth',
+      component: Layout,
+      hidden: true,
+      children: [
+        {
+          path: 'role/:userId(\\d+)',
+          component: () => import('@/views/system/user/authRole'),
+          name: 'AuthRole',
+          meta: { title: '分配角色', activeMenu: '/system/user' }
+        }
+      ]
+    }
   // {
   //   path: '/login',
   //   name: 'Login',
