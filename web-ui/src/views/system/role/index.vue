@@ -10,9 +10,9 @@
           <el-input v-model="searchForm.roleKey" placeholder="请输入权限字符" clearable />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="角色状态" clearable>
-            <el-option label="正常" value="0" />
-            <el-option label="停用" value="1" />
+          <el-select v-model="searchForm.status" placeholder="角色状态" clearable style="width: 180px;">
+            <el-option v-for="dict in sys_normal_disable" :key="dict.dictValue" :label="dict.dictLabel"
+              :value="dict.dictValue" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -53,8 +53,8 @@
         <el-table-column prop="createTime" label="创建时间" width="180" />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(row.roleId)">删除</el-button>
+            <el-button size="small" type="primary" text @click="handleEdit(row)">编辑</el-button>
+            <el-button size="small" type="danger" text @click="handleDelete(row.roleId)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -90,6 +90,24 @@
             <el-radio label="1">停用</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="菜单权限">
+          <div class="menu-tree-wrapper">
+            <div class="tree-actions">
+              <el-checkbox v-model="expandAll" @change="handleExpandChange">展开/折叠</el-checkbox>
+              <el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选/全不选</el-checkbox>
+              <el-checkbox v-model="checkStrictly">父子联动</el-checkbox>
+            </div>
+            <el-tree
+              ref="menuTreeRef"
+              :data="menuTreeData"
+              :props="{ label: 'menuName', children: 'children' }"
+              :check-strictly="!checkStrictly"
+              node-key="menuId"
+              show-checkbox
+              default-expand-all
+            />
+          </div>
+        </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" />
         </el-form-item>
@@ -103,10 +121,13 @@
 </template>
 
 <script setup>
+import { getMenuTreeByRoot} from '@/api/system/menu'
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getRolePage, addRole, updateRole, deleteRole } from '@/api/system/role'
 import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
+
+const { sys_normal_disable } = useDict('sys_normal_disable')
 
 const searchForm = reactive({
   roleName: '',
@@ -117,6 +138,11 @@ const searchForm = reactive({
 const tableData = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增角色')
+const menuTreeData = ref([])
+const menuTreeRef = ref(null)
+const expandAll = ref(true)
+const checkAll = ref(false)
+const checkStrictly = ref(true)
 
 const form = reactive({
   roleId: null,
@@ -124,7 +150,8 @@ const form = reactive({
   roleKey: '',
   roleSort: 0,
   status: '0',
-  remark: ''
+  remark: '',
+  menuIds: []
 })
 
 const pagination = reactive({
@@ -160,20 +187,79 @@ const handleReset = () => {
   handleSearch()
 }
 
+const loadMenuTree = async () => {
+  try {
+    const response = await getMenuTreeByRoot(0)
+    if (response.code === 200) {
+      menuTreeData.value = response.data || []
+    }
+  } catch (error) {
+    console.error('加载菜单树失败', error)
+  }
+}
+
+const handleExpandChange = (val) => {
+  if (!menuTreeRef.value) return
+  const nodes = menuTreeRef.value.store._getAllNodes()
+  nodes.forEach(node => {
+    node.expanded = val
+  })
+}
+
+const handleCheckAllChange = (val) => {
+  if (!menuTreeRef.value) return
+  if (val) {
+    const allKeys = getAllMenuIds(menuTreeData.value)
+    menuTreeRef.value.setCheckedKeys(allKeys)
+  } else {
+    menuTreeRef.value.setCheckedKeys([])
+  }
+}
+
+const getAllMenuIds = (menus) => {
+  let ids = []
+  menus.forEach(menu => {
+    ids.push(menu.menuId)
+    if (menu.children && menu.children.length > 0) {
+      ids = ids.concat(getAllMenuIds(menu.children))
+    }
+  })
+  return ids
+}
+
 const handleAdd = () => {
   dialogTitle.value = '新增角色'
-  Object.assign(form, { roleId: null, roleName: '', roleKey: '', roleSort: 0, status: '0', remark: '' })
+  Object.assign(form, { roleId: null, roleName: '', roleKey: '', roleSort: 0, status: '0', remark: '', menuIds: [] })
+  loadMenuTree()
   dialogVisible.value = true
+  setTimeout(() => {
+    if (menuTreeRef.value) {
+      menuTreeRef.value.setCheckedKeys([])
+    }
+  }, 100)
 }
 
 const handleEdit = (row) => {
   dialogTitle.value = '编辑角色'
   Object.assign(form, row)
+  loadMenuTree()
   dialogVisible.value = true
+  setTimeout(() => {
+    if (menuTreeRef.value && row.menuIds) {
+      menuTreeRef.value.setCheckedKeys(row.menuIds)
+    }
+  }, 100)
 }
 
 const handleSubmit = async () => {
   try {
+    // 获取选中的菜单ID
+    if (menuTreeRef.value) {
+      const checkedKeys = menuTreeRef.value.getCheckedKeys()
+      const halfCheckedKeys = menuTreeRef.value.getHalfCheckedKeys()
+      form.menuIds = [...checkedKeys, ...halfCheckedKeys]
+    }
+    
     if (form.roleId) {
       await updateRole(form)
       ElMessage.success('修改成功')
@@ -225,6 +311,23 @@ onMounted(() => {
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
+  }
+}
+
+.menu-tree-wrapper {
+  width: 100%;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+
+  .tree-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ebeef5;
   }
 }
 </style>
