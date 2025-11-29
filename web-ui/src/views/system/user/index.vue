@@ -84,10 +84,21 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="220" fixed="right">
               <template #default="{ row }">
-                <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
-                <el-button size="small" type="danger" @click="handleDelete(row.userId)">删除</el-button>
+                <el-button size="small" type="primary" text @click="handleEdit(row)">编辑</el-button>
+                <el-button size="small" type="danger" text @click="handleDelete(row.userId)">删除</el-button>
+                <el-dropdown @command="(command) => handleCommand(command, row)">
+                  <el-button size="small" text>
+                    更多
+                    <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+                  </el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item command="resetPassword">重置密码</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </template>
             </el-table-column>
           </el-table>
@@ -100,6 +111,22 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 重置密码对话框 -->
+    <el-dialog v-model="resetPasswordVisible" title="重置密码" width="500px">
+      <el-form :model="resetPasswordForm" label-width="100px">
+        <el-form-item label="用户名称">
+          <el-input v-model="resetPasswordForm.userName" disabled />
+        </el-form-item>
+        <el-form-item label="新密码" required>
+          <el-input v-model="resetPasswordForm.password" type="password" show-password placeholder="请输入新密码" autocomplete="new-password" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="resetPasswordVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleResetPasswordSubmit">确定</el-button>
+      </template>
+    </el-dialog>
 
     <!-- 新增/编辑对话框 -->
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="800px">
@@ -194,7 +221,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getUserPage, addUser, updateUser, deleteUser, getUserInfo } from '@/api/system/user'
+import { getUserPage, addUser, updateUser, deleteUser, getUserInfo, resetUserPwd } from '@/api/system/user'
 import { getDeptTreeByRoot, getDeptList } from '@/api/system/dept'
 import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
 
@@ -219,6 +246,12 @@ const roleList = ref([])
 const tableData = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增用户')
+const resetPasswordVisible = ref(false)
+const resetPasswordForm = reactive({
+  userId: null,
+  userName: '',
+  password: ''
+})
 
 const form = reactive({
   userId: null,
@@ -415,6 +448,39 @@ const handleStatusChange = async (row) => {
       // 用户取消操作，恢复原状态
       row.status = row.status === '0' ? '1' : '0'
     }
+  }
+}
+
+const handleCommand = (command, row) => {
+  if (command === 'resetPassword') {
+    handleResetPassword(row)
+  }
+}
+
+const handleResetPassword = (row) => {
+  Object.assign(resetPasswordForm, {
+    userId: row.userId,
+    userName: row.userName,
+    password: ''
+  })
+  resetPasswordVisible.value = true
+}
+
+const handleResetPasswordSubmit = async () => {
+  if (!resetPasswordForm.password) {
+    ElMessage.warning('请输入新密码')
+    return
+  }
+  
+  try {
+    await resetUserPwd({
+      userId: resetPasswordForm.userId,
+      password: resetPasswordForm.password
+    })
+    ElMessage.success('密码重置成功')
+    resetPasswordVisible.value = false
+  } catch (error) {
+    ElMessage.error('密码重置失败: ' + (error.message || '未知错误'))
   }
 }
 

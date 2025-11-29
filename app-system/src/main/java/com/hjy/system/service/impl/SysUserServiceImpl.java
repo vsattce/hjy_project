@@ -93,28 +93,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
 
         // 2. 存角色关联
         sysUserRoleService.insertUserRoleByUser( entity);
-//        List<SysUserRole> sysUserRoles = new ArrayList<>();
-//        if (entity.getRoleIds() != null) {
-//            for (Long roleId : entity.getRoleIds()) {
-//                sysUserRoles.add(new SysUserRole(entity.getUserId(), roleId));
-//            }
-//            if (!sysUserRoles.isEmpty()) {
-//                sysUserRoleService.saveBatch(sysUserRoles);
-//            }
-//        }
 
         // 3. 存岗位关联（如果这里报错，第1步和第2步存入的数据会全部撤销，就像没发生过一样）
         sysUserPostService.insertUserPostByUser( entity);
-//        List<SysUserPost> sysUserPosts = new ArrayList<>();
-//        if (entity.getPostIds() != null) {
-//            for (Long postId : entity.getPostIds()) {
-//                sysUserPosts.add(new SysUserPost(entity.getUserId(), postId));
-//            }
-//            if (!sysUserPosts.isEmpty()) {
-//                sysUserPostService.saveBatch(sysUserPosts);
-//            }
-//        }
-
 
         return 1;
     }
@@ -130,28 +111,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         sysUserRoleService.remove(new QueryWrapper<SysUserRole>().eq("user_id", entity.getUserId()));
         // 2. 存角色关联
         sysUserRoleService.insertUserRoleByUser( entity);
-//        List<SysUserRole> sysUserRoles = new ArrayList<>();
-//        if (entity.getRoleIds() != null) {
-//            for (Long roleId : entity.getRoleIds()) {
-//                sysUserRoles.add(new SysUserRole(entity.getUserId(), roleId));
-//            }
-//            if (!sysUserRoles.isEmpty()) {
-//                sysUserRoleService.saveBatch(sysUserRoles);
-//            }
-//        }
+
         sysUserPostService.remove(new QueryWrapper<SysUserPost>().eq("user_id", entity.getUserId()));
 
         sysUserPostService.insertUserPostByUser( entity);
-        // 3. 存岗位关联（如果这里报错，第1步和第2步存入的数据会全部撤销，就像没发生过一样）
-//        List<SysUserPost> sysUserPosts = new ArrayList<>();
-//        if (entity.getPostIds() != null) {
-//            for (Long postId : entity.getPostIds()) {
-//                sysUserPosts.add(new SysUserPost(entity.getUserId(), postId));
-//            }
-//            if (!sysUserPosts.isEmpty()) {
-//                sysUserPostService.saveBatch(sysUserPosts);
-//            }
-//        }
 //
         return true;
     }
@@ -171,5 +134,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         sysUserPostService.remove(new QueryWrapper<SysUserPost>().in("user_id", ids));
 
         return true;
+    }
+
+    @Override
+    public boolean resetPwd(SysUser user) {
+        return sysUserMapper.updateById(user)>0;
     }
 }

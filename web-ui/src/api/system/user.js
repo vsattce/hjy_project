@@ -68,6 +68,7 @@ export function addUser(data) {
   })
 }
 
+
 /**
  * 修改用户信息
  * @param {Object} data - 用户信息（必须包含 userId）
@@ -90,5 +91,13 @@ export function deleteUser(ids) {
   return request({
     url: `/system/user/${ids}`,
     method: 'delete'
+  })
+}
+
+export function resetUserPwd(data) {
+  return request({
+    url: '/system/user/resetPwd',
+    method: 'put',
+    data
   })
 }

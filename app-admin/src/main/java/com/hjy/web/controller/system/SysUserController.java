@@ -106,4 +106,13 @@ public class SysUserController extends BaseController<SysUserServiceImpl, SysUse
         boolean result = sysUserService.deleteUsersWithRelationsByIds(Arrays.asList(ids));
         return toAjax(result);
     }
+    @PutMapping("/resetPwd")
+    public AjaxResult resetPwd(@RequestBody SysUser user)
+    {
+//        sysUserService.checkUserAllowed(user);
+//        sysUserService.checkUserDataScope(user.getUserId());
+        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+        user.setUpdateBy(getUsername());
+        return toAjax(sysUserService.resetPwd(user));
+    }
 }

@@ -35,7 +35,7 @@ router.beforeEach(async (to, from, next) => {
         } catch (error) {
           // remove token and go to login page to re-login
           removeToken();
-          console.error(error || "Has Error");
+          console.error(error || "permissionStore.generateRoutes() Has Error");
           next(`/login?redirect=${to.path}`);
           NProgress.done();
         }

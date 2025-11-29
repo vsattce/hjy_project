@@ -28,4 +28,7 @@ public interface ISysUserService extends IBaseService<SysUser> {
 
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteUsersWithRelationsByIds(List<Long> ids);
+
+
+    public boolean resetPwd(SysUser user);
 }
