@@ -1,5 +1,7 @@
 package com.hjy.system.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hjy.common.core.domain.entity.SysUser;
 import com.hjy.common.core.service.IBaseService;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,4 +36,9 @@ public interface ISysUserService extends IBaseService<SysUser> {
 
     @Transactional(rollbackFor = Exception.class)
     public void insertUserAuth(Long userId, Long[] roleIds);
+
+    public IPage<SysUser> pageByRoleId(Page<SysUser> page, Long roleId,SysUser sysUser);
+
+    public IPage<SysUser> pageUnallocatedByRoleId(Page<SysUser> page, Long roleId,SysUser sysUser);
+
 }

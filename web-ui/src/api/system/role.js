@@ -93,3 +93,57 @@ export function getUserAllocatedList(params) {
     params
   })
 }
+
+/**
+ * 查询未分配用户角色列表
+ * @param {Object} params - 查询参数（包含roleId）
+ * @returns {Promise} 返回未分配用户列表
+ */
+export function getUserUnallocatedList(params) {
+  return request({
+    url: '/system/role/authUser/unallocatedList',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 取消授权用户
+ * @param {Object} data - 包含roleId和userId
+ * @returns {Promise}
+ */
+export function cancelAuthUser(data) {
+  return request({
+    url: '/system/role/authUser/cancel',
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * 批量取消授权用户
+ * @param {Number} roleId - 角色ID
+ * @param {Array} userIds - 用户ID数组
+ * @returns {Promise}
+ */
+export function cancelAuthUserAll(roleId, userIds) {
+  return request({
+    url: '/system/role/authUser/cancelAll',
+    method: 'put',
+    params: { roleId, userIds }
+  })
+}
+
+/**
+ * 批量选择用户授权
+ * @param {Number} roleId - 角色ID
+ * @param {Array} userIds - 用户ID数组
+ * @returns {Promise}
+ */
+export function selectAuthUserAll(roleId, userIds) {
+  return request({
+    url: '/system/role/authUser/selectAll',
+    method: 'put',
+    params: { roleId, userIds }
+  })
+}

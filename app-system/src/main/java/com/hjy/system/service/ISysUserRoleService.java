@@ -6,6 +6,11 @@ import com.hjy.system.domain.SysUserRole;
 
 public interface ISysUserRoleService extends IBaseService<SysUserRole> {
 
-    public boolean insertUserRoleByUser(SysUser sysUser);
+    public void insertUserRoleByUser(SysUser sysUser);
 
+    public boolean deleteAuthUser(SysUserRole sysUserRole);
+
+    public boolean deleteAuthUsers(Long roleId, Long[] userIds);
+
+    public boolean insertAuthUsers(Long roleId, Long[] userIds);
 }

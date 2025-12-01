@@ -1,15 +1,19 @@
 package com.hjy.web.controller.system;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.hjy.common.core.domain.entity.SysUser;
+import com.hjy.system.domain.SysUserRole;
+import com.hjy.system.service.ISysUserRoleService;
+import com.hjy.system.service.ISysUserService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import com.hjy.common.core.controller.BaseController;
 import com.hjy.common.core.domain.AjaxResult;
@@ -29,6 +33,12 @@ public class SysRoleController extends BaseController<SysRoleServiceImpl, SysRol
     
     @Autowired
     private ISysRoleService sysRoleService;
+
+    @Autowired
+    private ISysUserService sysUserService;
+
+    @Autowired
+    private ISysUserRoleService sysUserRoleService;
     
     /**
      * 根据ID获取角色信息（包含菜单ID列表）
@@ -81,5 +91,56 @@ public class SysRoleController extends BaseController<SysRoleServiceImpl, SysRol
         logger.info("批量删除角色数据，ID数量: {}", ids.length);
         boolean result = sysRoleService.deleteRolesWithRelationsByIds(Arrays.asList(ids));
         return toAjax(result);
+    }
+
+//
+
+    /**
+     * 查询已分配用户角色列表
+     */
+    @GetMapping("/authUser/allocatedList")
+    public AjaxResult allocatedList(Page<SysUser> page, SysUser sysUser, @RequestParam(value = "roleId", required = true)Long roleId)
+    {
+//        Long roleId = (Long)map.get("roleId");
+        IPage<SysUser> list = sysUserService.pageByRoleId(page,roleId,sysUser);
+        return success(list);
+    }
+
+    /**
+     * 查询未分配用户角色列表
+     */
+    @GetMapping("/authUser/unallocatedList")
+    public AjaxResult unallocatedList(Page<SysUser> page, SysUser sysUser, @RequestParam(value = "roleId", required = true)Long roleId)
+    {
+        IPage<SysUser> list = sysUserService.pageUnallocatedByRoleId(page,roleId,sysUser);
+        return success(list);
+    }
+
+    /**
+     * 取消授权用户
+     */
+    @PutMapping("/authUser/cancel")
+    public AjaxResult cancelAuthUser(@RequestBody SysUserRole userRole)
+    {
+        return toAjax(sysUserRoleService.deleteAuthUser(userRole));
+    }
+
+    /**
+     * 批量取消授权用户
+     */
+    @PutMapping("/authUser/cancelAll")
+    public AjaxResult cancelAuthUserAll(Long roleId, Long[] userIds)
+    {
+        return toAjax(sysUserRoleService.deleteAuthUsers(roleId, userIds));
+    }
+
+    /**
+     * 批量选择用户授权
+     */
+    @PutMapping("/authUser/selectAll")
+    public AjaxResult selectAuthUserAll(Long roleId, Long[] userIds)
+    {
+//        sysUserRoleService.checkRoleDataScope(roleId);
+        return toAjax(sysUserRoleService.insertAuthUsers(roleId, userIds));
     }
 }

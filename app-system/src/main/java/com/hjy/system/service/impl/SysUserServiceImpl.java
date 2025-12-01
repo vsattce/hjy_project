@@ -2,6 +2,7 @@ package com.hjy.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hjy.common.core.domain.entity.SysRole;
 import com.hjy.common.core.domain.entity.SysUser;
 import com.hjy.common.core.service.impl.BaseServiceImpl;
@@ -13,6 +14,7 @@ import com.hjy.system.service.ISysRoleService;
 import com.hjy.system.service.ISysUserPostService;
 import com.hjy.system.service.ISysUserRoleService;
 import com.hjy.system.service.ISysUserService;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
 //    private SysUserRoleService sysUserRoleService;
     @Autowired
     private ISysUserPostService sysUserPostService;
+//    @Autowired
+//    private ISysUserRoleService sysUserRoleService;
 
     @Override
     public SysUser selectUserByUserName(String userName) {
@@ -147,4 +151,31 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         List<SysUserRole> sysUserRoles = Arrays.stream(roleIds).map(roleId->new SysUserRole(userId,roleId)).toList();
         sysUserRoleService.saveBatch(sysUserRoles);
     }
+
+    @Override
+    public IPage<SysUser> pageByRoleId(Page<SysUser> page, Long roleId, SysUser sysUser) {
+        List<SysUserRole> list = sysUserRoleService.list(new SysUserRole(null, roleId));
+        if (list == null || list.isEmpty()){
+            return page;
+        }
+
+        QueryWrapper<SysUser> queryWrapper = QueryWrapperUtils.entity2Wrapper(sysUser,null);
+
+        queryWrapper.in("user_id", list.stream().map(SysUserRole::getUserId).collect(Collectors.toList()));
+        return super.page(page,queryWrapper);
+    }
+
+    @Override
+    public IPage<SysUser> pageUnallocatedByRoleId(Page<SysUser> page, Long roleId, SysUser sysUser) {
+        List<SysUserRole> list = sysUserRoleService.list(new SysUserRole(null, roleId));
+        if (list == null || list.isEmpty()){
+            return super.page( page,sysUser);
+        }
+
+        QueryWrapper<SysUser> queryWrapper = QueryWrapperUtils.entity2Wrapper(sysUser,null);
+
+        queryWrapper.notIn("user_id", list.stream().map(SysUserRole::getUserId).collect(Collectors.toList()));
+        return super.page(page,queryWrapper);
+    }
+//
 }

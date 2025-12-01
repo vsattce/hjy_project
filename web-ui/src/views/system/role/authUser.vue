@@ -68,14 +68,68 @@
         />
       </div>
     </el-card>
+
+    <!-- 选择用户对话框 -->
+    <el-dialog v-model="selectUserVisible" title="选择用户" width="1000px">
+      <el-form :inline="true" :model="selectUserForm">
+        <el-form-item label="用户名称">
+          <el-input v-model="selectUserForm.userName" placeholder="请输入用户名称" clearable />
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input v-model="selectUserForm.phonenumber" placeholder="请输入手机号码" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleSelectUserSearch">
+            <el-icon><Search /></el-icon>
+            <span>搜索</span>
+          </el-button>
+          <el-button @click="handleSelectUserReset">
+            <el-icon><Refresh /></el-icon>
+            <span>重置</span>
+          </el-button>
+        </el-form-item>
+      </el-form>
+
+      <el-table :data="selectUserTableData" @selection-change="handleSelectUserChange" style="width: 100%">
+        <el-table-column type="selection" width="55" />
+        <el-table-column prop="userId" label="用户编号" width="100" />
+        <el-table-column prop="userName" label="用户名称" min-width="120" />
+        <el-table-column prop="nickName" label="用户昵称" min-width="120" />
+        <el-table-column prop="email" label="邮箱" min-width="150" />
+        <el-table-column prop="phonenumber" label="手机号码" width="120" />
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <dict-tag :options="sys_normal_disable" :value="row.status" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="180" />
+      </el-table>
+
+      <div class="pagination-wrapper">
+        <el-pagination 
+          v-model:current-page="selectUserPagination.page" 
+          v-model:page-size="selectUserPagination.pageSize"
+          :page-sizes="PAGE_SIZES" 
+          :total="selectUserPagination.total" 
+          :layout="PAGINATION_LAYOUT"
+          @size-change="loadUnallocatedUsers" 
+          @current-change="loadUnallocatedUsers" 
+        />
+      </div>
+
+      <template #footer>
+        <el-button @click="selectUserVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleConfirmSelectUser">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { getUserAllocatedList } from '@/api/system/role.js'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getUserAllocatedList, getUserUnallocatedList, cancelAuthUser, cancelAuthUserAll, selectAuthUserAll } from '@/api/system/role.js'
 import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
 
 const route = useRoute()
@@ -94,6 +148,20 @@ const searchForm = reactive({
 const tableData = ref([])
 
 const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  total: 0
+})
+
+// 选择用户对话框相关
+const selectUserVisible = ref(false)
+const selectUserForm = reactive({
+  userName: '',
+  phonenumber: ''
+})
+const selectUserTableData = ref([])
+const selectedUnallocatedUsers = ref([])
+const selectUserPagination = reactive({
   page: 1,
   pageSize: 10,
   total: 0
@@ -133,24 +201,91 @@ const handleSelectionChange = (selection) => {
 }
 
 const handleAddUser = () => {
-  console.log('添加用户到角色:', { roleId: roleId.value })
-  ElMessage.info('添加用户功能待实现')
+  selectUserVisible.value = true
+  selectUserPagination.page = 1
+  loadUnallocatedUsers()
+}
+
+const loadUnallocatedUsers = async () => {
+  try {
+    const params = {
+      current: selectUserPagination.page,
+      size: selectUserPagination.pageSize,
+      userName: selectUserForm.userName,
+      phonenumber: selectUserForm.phonenumber,
+      roleId: roleId.value
+    }
+    const response = await getUserUnallocatedList(params)
+    if (response.code === 200 && response.data) {
+      selectUserTableData.value = response.data.records || []
+      selectUserPagination.total = response.data.total || 0
+    }
+  } catch (error) {
+    ElMessage.error('加载未分配用户失败: ' + (error.message || '未知错误'))
+  }
+}
+
+const handleSelectUserSearch = () => {
+  selectUserPagination.page = 1
+  loadUnallocatedUsers()
+}
+
+const handleSelectUserReset = () => {
+  Object.assign(selectUserForm, { userName: '', phonenumber: '' })
+  handleSelectUserSearch()
+}
+
+const handleSelectUserChange = (selection) => {
+  selectedUnallocatedUsers.value = selection
+}
+
+const handleConfirmSelectUser = async () => {
+  if (selectedUnallocatedUsers.value.length === 0) {
+    ElMessage.warning('请选择要添加的用户')
+    return
+  }
+  
+  try {
+    const userIds = selectedUnallocatedUsers.value.map(user => user.userId)
+    await selectAuthUserAll(roleId.value, userIds)
+    ElMessage.success('添加用户成功')
+    selectUserVisible.value = false
+    loadData()
+  } catch (error) {
+    ElMessage.error('添加用户失败: ' + (error.message || '未知错误'))
+  }
 }
 
 const handleRemove = async (row) => {
-  console.log('取消授权用户:', { roleId: roleId.value, userId: row.userId, userName: row.userName })
-  ElMessage.info('取消授权功能待实现')
+  try {
+    await ElMessageBox.confirm(`确定要取消用户"${row.userName}"的授权吗？`, '提示', { type: 'warning' })
+    await cancelAuthUser({ roleId: roleId.value, userId: row.userId })
+    ElMessage.success('取消授权成功')
+    loadData()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('取消授权失败: ' + (error.message || '未知错误'))
+    }
+  }
 }
 
-const handleBatchRemove = () => {
+const handleBatchRemove = async () => {
   if (selectedUsers.value.length === 0) {
     ElMessage.warning('请选择要取消授权的用户')
     return
   }
   
-  const userIds = selectedUsers.value.map(user => user.userId)
-  console.log('批量取消授权:', { roleId: roleId.value, userIds, count: selectedUsers.value.length })
-  ElMessage.info('批量取消授权功能待实现')
+  try {
+    await ElMessageBox.confirm(`确定要取消选中的 ${selectedUsers.value.length} 个用户的授权吗？`, '提示', { type: 'warning' })
+    const userIds = selectedUsers.value.map(user => user.userId)
+    await cancelAuthUserAll(roleId.value, userIds)
+    ElMessage.success('批量取消授权成功')
+    loadData()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('批量取消授权失败: ' + (error.message || '未知错误'))
+    }
+  }
 }
 
 const handleClose = () => {
