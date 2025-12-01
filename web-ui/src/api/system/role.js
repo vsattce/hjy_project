@@ -80,3 +80,16 @@ export function deleteRole(ids) {
     method: 'delete'
   })
 }
+
+/**
+ * 查询已分配用户角色列表
+ * @param {Object} params - 查询参数（包含roleId）
+ * @returns {Promise} 返回已分配用户列表
+ */
+export function getUserAllocatedList(params) {
+  return request({
+    url: '/system/role/authUser/allocatedList',
+    method: 'get',
+    params
+  })
+}

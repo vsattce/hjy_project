@@ -17,15 +17,21 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">
-            <el-icon><Search /></el-icon>
+            <el-icon>
+              <Search />
+            </el-icon>
             <span>搜索</span>
           </el-button>
           <el-button @click="handleReset">
-            <el-icon><Refresh /></el-icon>
+            <el-icon>
+              <Refresh />
+            </el-icon>
             <span>重置</span>
           </el-button>
           <el-button type="success" @click="handleAdd">
-            <el-icon><Plus /></el-icon>
+            <el-icon>
+              <Plus />
+            </el-icon>
             <span>新增</span>
           </el-button>
         </el-form-item>
@@ -42,33 +48,36 @@
         <el-table-column prop="roleSort" label="显示顺序" width="100" />
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
-            <el-switch
-              v-model="row.status"
-              active-value="0"
-              inactive-value="1"
-              @change="handleStatusChange(row)"
-            />
+            <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)" />
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" />
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button size="small" type="primary" text @click="handleEdit(row)">编辑</el-button>
             <el-button size="small" type="danger" text @click="handleDelete(row.roleId)">删除</el-button>
+            <el-dropdown @command="(command) => handleCommand(command, row)">
+              <el-button size="small" text>
+                更多
+                <el-icon class="el-icon--right">
+                  <ArrowDown />
+                </el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <!-- <el-dropdown-item command="resetPassword">重置密码</el-dropdown-item> -->
+                  <el-dropdown-item command="handleAuthUser">分配用户</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
 
       <div class="pagination-wrapper">
-        <el-pagination
-          v-model:current-page="pagination.page"
-          v-model:page-size="pagination.pageSize"
-          :page-sizes="PAGE_SIZES"
-          :total="pagination.total"
-          :layout="PAGINATION_LAYOUT"
-          @size-change="loadData"
-          @current-change="loadData"
-        />
+        <el-pagination v-model:current-page="pagination.page" v-model:page-size="pagination.pageSize"
+          :page-sizes="PAGE_SIZES" :total="pagination.total" :layout="PAGINATION_LAYOUT" @size-change="loadData"
+          @current-change="loadData" />
       </div>
     </el-card>
 
@@ -97,14 +106,8 @@
               <el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选/全不选</el-checkbox>
               <el-checkbox v-model="checkStrictly">父子联动</el-checkbox>
             </div>
-            <el-tree
-              ref="menuTreeRef"
-              :data="menuTreeData"
-              :props="{ label: 'menuName', children: 'children' }"
-              :check-strictly="!checkStrictly"
-              node-key="menuId"
-              show-checkbox
-            />
+            <el-tree ref="menuTreeRef" :data="menuTreeData" :props="{ label: 'menuName', children: 'children' }"
+              :check-strictly="!checkStrictly" node-key="menuId" show-checkbox />
           </div>
         </el-form-item>
         <el-form-item label="备注">
@@ -125,7 +128,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getRolePage, addRole, updateRole, deleteRole, getRoleInfo } from '@/api/system/role'
 import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
-// import useDict from '@/hooks/useDict'
+import router from '@/router'
 
 const { sys_normal_disable } = useDict('sys_normal_disable')
 
@@ -266,7 +269,7 @@ const handleSubmit = async () => {
       const checkedKeys = menuTreeRef.value.getCheckedKeys()
       form.menuIds = checkedKeys
     }
-    
+
     if (form.roleId) {
       await updateRole(form)
       ElMessage.success('修改成功')
@@ -300,6 +303,13 @@ const handleDelete = async (id) => {
     loadData()
   } catch (error) {
     if (error !== 'cancel') ElMessage.error('删除失败: ' + (error.message || '未知错误'))
+  }
+}
+
+const handleCommand = (command, row) => {
+  if (command === 'handleAuthUser') {
+    // 分配用户逻辑
+    router.push({ path: `/system/role-auth/user/${row.roleId}` });
   }
 }
 
