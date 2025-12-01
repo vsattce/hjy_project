@@ -55,46 +55,69 @@
         <el-table-column prop="createTime" label="创建时间" width="180" />
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(row.deptId)">删除</el-button>
+            <el-button size="small" type="primary" text @click="handleEdit(row)">编辑</el-button>
+            <el-button size="small" type="danger" text @click="handleDelete(row.deptId)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
     <!-- 新增/编辑对话框 -->
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px">
-      <el-form :model="form" label-width="100px">
-        <el-form-item label="上级部门">
-          <el-tree-select
-            v-model="form.parentId"
-            :data="tableData"
-            :props="{ label: 'deptName', value: 'deptId' }"
-            placeholder="请选择上级部门"
-            check-strictly
-          />
-        </el-form-item>
-        <el-form-item label="部门名称" required>
-          <el-input v-model="form.deptName" placeholder="请输入部门名称" />
-        </el-form-item>
-        <el-form-item label="显示排序" required>
-          <el-input-number v-model="form.orderNum" :min="0" />
-        </el-form-item>
-        <el-form-item label="负责人">
-          <el-input v-model="form.leader" placeholder="请输入负责人" />
-        </el-form-item>
-        <el-form-item label="联系电话">
-          <el-input v-model="form.phone" placeholder="请输入联系电话" />
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email" placeholder="请输入邮箱" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio label="0">正常</el-radio>
-            <el-radio label="1">停用</el-radio>
-          </el-radio-group>
-        </el-form-item>
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="700px">
+      <el-form :model="form" label-width="80px">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="上级部门">
+              <el-tree-select
+                v-model="form.parentId"
+                :data="tableData"
+                :props="{ label: 'deptName', value: 'deptId' }"
+                placeholder="请选择上级部门"
+                check-strictly
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="部门名称" required>
+              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="显示排序" required>
+              <el-input-number v-model="form.orderNum" :min="0" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="负责人">
+              <el-input v-model="form.leader" placeholder="请输入负责人" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="联系电话">
+              <el-input v-model="form.phone" placeholder="请输入联系电话" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="邮箱">
+              <el-input v-model="form.email" placeholder="请输入邮箱" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="部门状态">
+              <el-radio-group v-model="form.status">
+                <el-radio label="0">正常</el-radio>
+                <el-radio label="1">停用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -172,16 +195,40 @@ const handleEdit = (row) => {
   dialogVisible.value = true
 }
 
+// 递归查找部门的所有祖先ID
+const findAncestors = (deptId, tree) => {
+  if (!deptId || deptId === 0) return '0'
+  
+  for (const dept of tree) {
+    if (dept.deptId === deptId) {
+      return dept.ancestors ? `${dept.ancestors},${dept.deptId}` : `0,${dept.deptId}`
+    }
+    if (dept.children && dept.children.length > 0) {
+      const result = findAncestors(deptId, dept.children)
+      if (result !== null) return result
+    }
+  }
+  return null
+}
+
 const handleSubmit = async () => {
   try {
+    // 先重新加载完整的部门树，确保数据是最新的
+    await loadAllDeptTree()
+    
+    // 构建ancestors字段，使用allDeptTree而不是tableData
+    const ancestors = findAncestors(form.parentId, allDeptTree.value) || '0'
+    const submitData = { ...form, ancestors }
+    
     if (form.deptId) {
-      await updateDept(form)
+      await updateDept(submitData)
       ElMessage.success('修改成功')
     } else {
-      await addDept(form)
+      await addDept(submitData)
       ElMessage.success('新增成功')
     }
     dialogVisible.value = false
+    await loadAllDeptTree()
     loadTreeData()
   } catch (error) {
     ElMessage.error('操作失败: ' + (error.message || '未知错误'))
