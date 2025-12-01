@@ -37,6 +37,18 @@
         <el-table-column prop="createTime" label="创建时间" width="180" />
       </el-table>
 
+      <div class="pagination-wrapper">
+        <el-pagination
+          v-model:current-page="pagination.page"
+          v-model:page-size="pagination.pageSize"
+          :page-sizes="PAGE_SIZES"
+          :total="pagination.total"
+          :layout="PAGINATION_LAYOUT"
+          @size-change="loadRoleList"
+          @current-change="loadRoleList"
+        />
+      </div>
+
       <div class="button-wrapper">
         <el-button @click="handleCancel">取消</el-button>
         <el-button type="primary" @click="handleSubmit">确定</el-button>
@@ -51,6 +63,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getUserAuthRole, updateAuthRole } from '@/api/system/user'
 import { getRolePage } from '@/api/system/role'
+import { PAGE_SIZES, PAGINATION_LAYOUT } from '@/config/pagination'
 
 const route = useRoute()
 const router = useRouter()
@@ -65,6 +78,12 @@ const roleList = ref([])
 const selectedRoleIds = ref([])
 const roleTableRef = ref(null)
 const isInitializing = ref(false) // 标志位，防止初始化时触发selection-change
+
+const pagination = reactive({
+  page: 1,
+  pageSize: 10,
+  total: 0
+})
 
 // 加载用户授权角色信息
 const loadUserAuthRole = async () => {
@@ -86,11 +105,12 @@ const loadUserAuthRole = async () => {
 const loadRoleList = async () => {
   try {
     const response = await getRolePage({
-      current: 1,
-      size: 1000
+      current: pagination.page,
+      size: pagination.pageSize
     })
     if (response.code === 200 && response.data) {
       roleList.value = response.data.records || []
+      pagination.total = response.data.total || 0
       
       // 设置默认选中的角色
       await loadUserAuthRole()
@@ -163,6 +183,12 @@ onMounted(() => {
 
   .card-header {
     font-weight: 600;
+  }
+
+  .pagination-wrapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .button-wrapper {
