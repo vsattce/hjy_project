@@ -23,6 +23,10 @@
             <el-icon><Plus /></el-icon>
             <span>新增</span>
           </el-button>
+          <el-button @click="toggleExpand">
+            <el-icon><component :is="isExpandAll ? 'Fold' : 'Expand'" /></el-icon>
+            <span>{{ isExpandAll ? '折叠' : '展开' }}</span>
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -30,10 +34,12 @@
     <!-- 树形表格 -->
     <el-card class="table-card" shadow="never">
       <el-table 
+        ref="tableRef"
         :data="tableData" 
         style="width: 100%" 
         row-key="deptId" 
         :tree-props="{ children: 'children' }"
+        :default-expand-all="isExpandAll"
       >
         <el-table-column prop="deptName" label="部门名称" min-width="200" />
         <el-table-column prop="orderNum" label="排序" width="100" />
@@ -108,6 +114,8 @@ const allDeptTree = ref([]) // 所有部门树，用于根节点选择
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增部门')
 const rootId = ref(null)
+const tableRef = ref(null)
+const isExpandAll = ref(true)
 
 const form = reactive({
   deptId: null,
@@ -191,6 +199,24 @@ const handleDelete = async (id) => {
       ElMessage.error('删除失败: ' + (error.message || '未知错误'))
     }
   }
+}
+
+// 切换展开/折叠
+const toggleExpand = () => {
+  isExpandAll.value = !isExpandAll.value
+  toggleRowExpansion(tableData.value, isExpandAll.value)
+}
+
+// 递归展开/折叠所有行
+const toggleRowExpansion = (data, isExpand) => {
+  data.forEach(item => {
+    if (tableRef.value) {
+      tableRef.value.toggleRowExpansion(item, isExpand)
+    }
+    if (item.children && item.children.length > 0) {
+      toggleRowExpansion(item.children, isExpand)
+    }
+  })
 }
 
 onMounted(() => {
