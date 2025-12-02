@@ -23,6 +23,10 @@
             <el-icon><Plus /></el-icon>
             <span>新增</span>
           </el-button>
+          <el-button @click="toggleExpand">
+            <el-icon><component :is="isExpanded ? 'Fold' : 'Expand'" /></el-icon>
+            <span>{{ isExpanded ? '折叠' : '展开' }}</span>
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -30,10 +34,12 @@
     <!-- 树形表格 -->
     <el-card class="table-card" shadow="never">
       <el-table 
+        ref="tableRef"
         :data="tableData" 
         style="width: 100%" 
         row-key="menuId" 
         :tree-props="{ children: 'children' }"
+        :default-expand-all="isExpanded"
       >
         <el-table-column prop="menuName" label="菜单名称" min-width="180" />
         <el-table-column prop="menuType" label="菜单类型" width="100">
@@ -130,6 +136,8 @@ const allMenuTree = ref([]) // 所有菜单树，用于根节点选择
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增菜单')
 const rootId = ref(null)
+const tableRef = ref(null)
+const isExpanded = ref(false)
 
 const form = reactive({
   menuId: null,
@@ -222,6 +230,26 @@ const isValidIconName = (iconName) => {
   if (!iconName || typeof iconName !== 'string') return false
   const invalidChars = /[#<>/\\]/
   return !invalidChars.test(iconName) && iconName.length > 0
+}
+
+// 切换展开/折叠
+const toggleExpand = () => {
+  isExpanded.value = !isExpanded.value
+  if (tableRef.value && tableData.value.length > 0) {
+    tableData.value.forEach(row => {
+      toggleRowExpansion(row, isExpanded.value)
+    })
+  }
+}
+
+// 递归展开/折叠所有行
+const toggleRowExpansion = (row, expanded) => {
+  tableRef.value.toggleRowExpansion(row, expanded)
+  if (row.children && row.children.length > 0) {
+    row.children.forEach(child => {
+      toggleRowExpansion(child, expanded)
+    })
+  }
 }
 
 onMounted(() => {
