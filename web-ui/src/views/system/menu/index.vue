@@ -60,6 +60,7 @@
         <el-table-column prop="orderNum" label="排序" width="80" />
         <el-table-column prop="perms" label="权限标识" min-width="150" show-overflow-tooltip />
         <el-table-column prop="path" label="路由地址" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="component" label="组件路径" min-width="180" show-overflow-tooltip />
         <el-table-column prop="status" label="状态" width="80">
           <template #default="{ row }">
             <el-tag :type="row.status === '0' ? 'success' : 'danger'" size="small">
@@ -68,8 +69,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="160" />
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column label="操作" width="240" fixed="right">
           <template #default="{ row }">
+            <el-button size="small" type="success" @click="handleAddChild(row)">新增</el-button>
             <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(row.menuId)">删除</el-button>
           </template>
@@ -78,45 +80,128 @@
     </el-card>
 
     <!-- 新增/编辑对话框 -->
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px">
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="700px">
       <el-form :model="form" label-width="100px">
-        <el-form-item label="上级菜单">
-          <el-tree-select
-            v-model="form.parentId"
-            :data="tableData"
-            :props="{ label: 'menuName', value: 'menuId' }"
-            placeholder="请选择上级菜单"
-            check-strictly
-          />
-        </el-form-item>
-        <el-form-item label="菜单类型" required>
-          <el-radio-group v-model="form.menuType">
-            <el-radio label="M">目录</el-radio>
-            <el-radio label="C">菜单</el-radio>
-            <el-radio label="F">按钮</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="菜单名称" required>
-          <el-input v-model="form.menuName" placeholder="请输入菜单名称" />
-        </el-form-item>
-        <el-form-item label="显示排序" required>
-          <el-input-number v-model="form.orderNum" :min="0" />
-        </el-form-item>
-        <el-form-item label="路由地址" v-if="form.menuType !== 'F'">
-          <el-input v-model="form.path" placeholder="请输入路由地址" />
-        </el-form-item>
-        <el-form-item label="权限标识">
-          <el-input v-model="form.perms" placeholder="请输入权限标识" />
-        </el-form-item>
-        <el-form-item label="菜单图标" v-if="form.menuType !== 'F'">
-          <el-input v-model="form.icon" placeholder="请输入图标名称，如：User" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio label="0">正常</el-radio>
-            <el-radio label="1">停用</el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="上级菜单">
+              <el-tree-select
+                v-model="form.parentId"
+                :data="allMenuTree"
+                :props="{ label: 'menuName', value: 'menuId' }"
+                placeholder="请选择上级菜单"
+                check-strictly
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          
+          <el-col :span="24">
+            <el-form-item label="菜单类型" required>
+              <el-radio-group v-model="form.menuType">
+                <el-radio label="M">目录</el-radio>
+                <el-radio label="C">菜单</el-radio>
+                <el-radio label="F">按钮</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <!-- 菜单图标 - 目录和菜单显示 -->
+          <el-col :span="12" v-if="form.menuType !== 'F'">
+            <el-form-item label="菜单图标">
+              <el-input v-model="form.icon" placeholder="点击选择图标">
+                <template #prefix>
+                  <el-icon v-if="form.icon && isValidIconName(form.icon)">
+                    <component :is="form.icon" />
+                  </el-icon>
+                  <el-icon v-else><Search /></el-icon>
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+
+          <!-- 显示排序 - 所有类型都显示 -->
+          <el-col :span="form.menuType === 'F' ? 24 : 12">
+            <el-form-item label="显示排序" required>
+              <el-input-number v-model="form.orderNum" :min="0" controls-position="right" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+
+          <!-- 菜单名称 - 所有类型都显示 -->
+          <el-col :span="form.menuType === 'C' ? 12 : 24">
+            <el-form-item label="菜单名称" required>
+              <el-input v-model="form.menuName" placeholder="请输入菜单名称" />
+            </el-form-item>
+          </el-col>
+
+          <!-- 是否外链 - 目录和菜单显示 -->
+          <el-col :span="12" v-if="form.menuType !== 'F'">
+            <el-form-item label="是否外链">
+              <el-radio-group v-model="form.isFrame">
+                <el-radio :label="0">是</el-radio>
+                <el-radio :label="1">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <!-- 路由地址 - 目录和菜单显示 -->
+          <el-col :span="12" v-if="form.menuType !== 'F'">
+            <el-form-item label="路由地址" :required="form.menuType !== 'F'">
+              <el-input v-model="form.path" placeholder="请输入路由地址" />
+            </el-form-item>
+          </el-col>
+
+          <!-- 组件路径 - 仅菜单显示 -->
+          <el-col :span="12" v-if="form.menuType === 'C'">
+            <el-form-item label="组件路径">
+              <el-input v-model="form.component" placeholder="请输入组件路径" />
+            </el-form-item>
+          </el-col>
+
+          <!-- 权限字符 - 菜单和按钮显示 -->
+          <el-col :span="12" v-if="form.menuType !== 'M'">
+            <el-form-item label="权限字符">
+              <el-input v-model="form.perms" placeholder="请输入权限标识" />
+            </el-form-item>
+          </el-col>
+
+          <!-- 路由参数 - 仅菜单显示 -->
+          <el-col :span="12" v-if="form.menuType === 'C'">
+            <el-form-item label="路由参数">
+              <el-input v-model="form.query" placeholder="请输入路由参数" />
+            </el-form-item>
+          </el-col>
+
+          <!-- 是否缓存 - 仅菜单显示 -->
+          <el-col :span="12" v-if="form.menuType === 'C'">
+            <el-form-item label="是否缓存">
+              <el-radio-group v-model="form.isCache">
+                <el-radio :label="0">缓存</el-radio>
+                <el-radio :label="1">不缓存</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <!-- 显示状态 - 目录和菜单显示 -->
+          <el-col :span="12" v-if="form.menuType !== 'F'">
+            <el-form-item label="显示状态">
+              <el-radio-group v-model="form.visible">
+                <el-radio label="0">显示</el-radio>
+                <el-radio label="1">隐藏</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <!-- 菜单状态 - 所有类型都显示 -->
+          <el-col :span="12">
+            <el-form-item label="菜单状态">
+              <el-radio-group v-model="form.status">
+                <el-radio label="0">正常</el-radio>
+                <el-radio label="1">停用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -146,8 +231,13 @@ const form = reactive({
   menuType: 'M',
   orderNum: 0,
   path: '',
+  component: '',
   perms: '',
+  query: '',
   icon: '',
+  isFrame: 1,
+  isCache: 0,
+  visible: '0',
   status: '0'
 })
 
@@ -156,7 +246,8 @@ const loadAllMenuTree = async () => {
   try {
     const response = await getMenuTreeByRoot(0)
     if (response.code === 200) {
-      allMenuTree.value = response.data || []
+        // const menu = ;
+      allMenuTree.value = [{ menuId: 0, menuName: '主类目', children: response.data || [] }]
     }
   } catch (error) {
     console.error('加载菜单树失败', error)
@@ -167,7 +258,7 @@ const loadTreeData = async () => {
   try {
     const response = await getMenuTreeByRoot(rootId.value|0)
     if (response.code === 200) {
-      tableData.value = response.data || []
+      tableData.value = response.data || []//[{ menuId: 0, menuName: '主类目', children: response.data || [] }]
     }
   } catch (error) {
     ElMessage.error('加载数据失败: ' + (error.message || '未知错误'))
@@ -183,8 +274,34 @@ const handleAdd = () => {
     menuType: 'M', 
     orderNum: 0, 
     path: '', 
+    component: '',
     perms: '', 
+    query: '',
     icon: '', 
+    isFrame: 1,
+    isCache: 0,
+    visible: '0',
+    status: '0' 
+  })
+  dialogVisible.value = true
+}
+
+const handleAddChild = (row) => {
+  dialogTitle.value = '新增子菜单'
+  Object.assign(form, { 
+    menuId: null, 
+    parentId: row.menuId, 
+    menuName: '', 
+    menuType: 'M', 
+    orderNum: 0, 
+    path: '', 
+    component: '',
+    perms: '', 
+    query: '',
+    icon: '', 
+    isFrame: 1,
+    isCache: 0,
+    visible: '0',
     status: '0' 
   })
   dialogVisible.value = true
